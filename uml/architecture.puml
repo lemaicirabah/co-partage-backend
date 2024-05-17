@@ -1,0 +1,116 @@
+@startuml
+
+package "Microservices Architecture" {
+
+    package "User Service" {
+        class UserService {
+            + createUser()
+            + getUser()
+            + updateUser()
+            + deleteUser()
+        }
+
+        database "UserDB" {
+        }
+    }
+
+    package "Project Service" {
+        class ProjectService {
+            + createProject()
+            + getProject()
+            + updateProject()
+            + deleteProject()
+        }
+
+        database "ProjectDB" {
+        }
+    }
+
+    package "Group Service" {
+        class GroupService {
+            + createGroup()
+            + getGroup()
+            + updateGroup()
+            + deleteGroup()
+        }
+
+        database "GroupDB" {
+        }
+    }
+
+    package "Notification Service" {
+        class NotificationService {
+            + sendNotification()
+            + getNotifications()
+        }
+
+        database "NotificationDB" {
+        }
+    }
+
+    package "Evaluation Service" {
+        class EvaluationService {
+            + createEvaluation()
+            + getEvaluation()
+            + updateEvaluation()
+            + deleteEvaluation()
+        }
+
+        database "EvaluationDB" {
+        }
+    }
+
+    package "Security Service" {
+        class AuthService {
+            + login()
+            + logout()
+            + validateToken()
+        }
+
+        database "AuthDB" {
+        }
+    }
+
+    class FrontendApplication {
+        + useUserService()
+        + useProjectService()
+        + useGroupService()
+        + useNotificationService()
+        + useEvaluationService()
+        + useAuthService()
+    }
+
+    class APIGateway {
+        + routeToUserService()
+        + routeToProjectService()
+        + routeToGroupService()
+        + routeToNotificationService()
+        + routeToEvaluationService()
+        + routeToAuthService()
+    }
+
+    FrontendApplication --> APIGateway : Uses
+    APIGateway --> UserService : Routes requests
+    APIGateway --> ProjectService : Routes requests
+    APIGateway --> GroupService : Routes requests
+    APIGateway --> NotificationService : Routes requests
+    APIGateway --> EvaluationService : Routes requests
+    APIGateway --> AuthService : Routes requests
+
+    UserService --> UserDB : CRUD Operations
+    ProjectService --> ProjectDB : CRUD Operations
+    GroupService --> GroupDB : CRUD Operations
+    NotificationService --> NotificationDB : CRUD Operations
+    EvaluationService --> EvaluationDB : CRUD Operations
+    AuthService --> AuthDB : CRUD Operations
+
+    UserService --> ProjectService : manages
+    UserService --> GroupService : part of
+    UserService --> NotificationService : receives
+    UserService --> EvaluationService : evaluates
+
+    ProjectService --> GroupService : related to
+    EvaluationService --> ProjectService : evaluates
+}
+
+@enduml

@@ -1,0 +1,124 @@
+@startuml
+
+package "Microservices Architecture" {
+
+    package "User Service" {
+        class User {
+            + id: Long
+            + username: String
+            + email: String
+            + password: String
+            + profile: Profile
+            + projects: Set<Project>
+            + groups: Set<Group>
+            + notifications: Set<Notification>
+            + evaluations: Set<Evaluation>
+        }
+
+        class Profile {
+            + id: Long
+            + firstName: String
+            + lastName: String
+            + bio: String
+            + skills: Set<Skill>
+        }
+
+        class Skill {
+            + id: Long
+            + name: String
+            + description: String
+        }
+    }
+
+    package "Project Service" {
+        class Project {
+            + id: Long
+            + title: String
+            + description: String
+            + creator: User
+            + members: Set<User>
+            + tasks: Set<Task>
+            + evaluations: Set<Evaluation>
+        }
+
+        class Task {
+            + id: Long
+            + title: String
+            + description: String
+            + assignee: User
+            + status: TaskStatus
+            + deadline: Date
+        }
+
+        enum TaskStatus {
+            TODO
+            IN_PROGRESS
+            DONE
+        }
+    }
+
+    package "Group Service" {
+        class Group {
+            + id: Long
+            + name: String
+            + description: String
+            + owner: User
+            + members: Set<User>
+            + projects: Set<Project>
+        }
+    }
+
+    package "Notification Service" {
+        class Notification {
+            + id: Long
+            + message: String
+            + timestamp: Date
+            + recipient: User
+        }
+    }
+
+    package "Evaluation Service" {
+        class Evaluation {
+            + id: Long
+            + comments: String
+            + rating: int
+            + evaluator: User
+            + evaluatee: User
+            + project: Project
+        }
+    }
+
+    package "Security Service" {
+        class AuthenticationRequest {
+            + username: String
+            + password: String
+        }
+
+        class AuthenticationResponse {
+            + token: String
+        }
+
+        class JwtUtil {
+            + generateToken(userDetails: UserDetails): String
+            + validateToken(token: String, userDetails: UserDetails): Boolean
+            + extractUsername(token: String): String
+        }
+    }
+}
+
+User --> Profile
+Profile --> Skill
+User "1" --* Project : creates
+User --* Group : memberOf
+User --* Notification : receives
+User "1" --* Evaluation : given
+User "1" --* Evaluation : received
+Project --* User : hasMember
+Project "1" --* Task : contains
+Task "1" --o "1" User : assignedTo
+Group --* Project : manages
+Evaluation "1" --o "1" User : evaluator
+Evaluation "1" --o "1" User : evaluatee
+Evaluation "1" --o "1" Project : relatedTo
+
+@enduml
