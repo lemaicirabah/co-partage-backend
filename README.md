@@ -105,6 +105,41 @@ spring.jpa.hibernate.ddl-auto=update
 
 Replace `db_name`, `db_username`, and `db_password` with your MySQL database name, username, and password.
 
+To set up databases for your microservices architecture with MySQL, follow these steps:
+
+1. **Install MySQL**: If not already installed, download and install MySQL from
+   the [official website](https://www.mysql.com/downloads/).
+
+2. **Access MySQL**: Log in to your MySQL instance using a MySQL client such as MySQL Workbench, phpMyAdmin, or the
+   MySQL command-line interface.
+
+3. **Create Databases**: Run SQL commands to create the databases needed for your microservices. Use
+   the `CREATE DATABASE` statement to create each database. For example:
+   ```sql
+   CREATE DATABASE service_one_db;
+   CREATE DATABASE service_two_db;
+   ```
+
+4. **Grant Privileges**: Optionally, grant privileges to users who will access these databases using the `GRANT`
+   statement. For example:
+   ```sql
+   GRANT ALL PRIVILEGES ON service_one_db.* TO 'service_one_user'@'localhost' IDENTIFIED BY 'password';
+   GRANT ALL PRIVILEGES ON service_two_db.* TO 'service_two_user'@'localhost' IDENTIFIED BY 'password';
+   ```
+
+5. **Verify**: Verify the creation of databases by listing them or querying the information schema. For example:
+   ```sql
+   SHOW DATABASES;
+   ```
+
+6. **Update Application Configuration**: Update the `application.properties` or `application.yml` files of your
+   microservices with the database connection information, including the database URL, username, and password.
+
+7. **Test Connection**: Test the connection to each database from your microservices to ensure successful connectivity.
+
+8. **Migrate Database Schema (Optional)**: If required, create database tables or schema using SQL scripts or migration
+   tools like Flyway or Liquibase.
+
 ## Running the Application
 
 To run the entire microservices architecture locally, follow these steps:
