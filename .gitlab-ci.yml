@@ -27,7 +27,6 @@ cache:
 test:
   stage: test
   script:
-    # - 'cd backend'
     - 'mvn $MAVEN_CLI_OPTS test'
   only:
     variables:
@@ -37,7 +36,6 @@ test:
 build:
   stage: build
   script:
-    # - 'cd backend'
     - 'mvn $MAVEN_CLI_OPTS clean package'
   only:
     variables:
