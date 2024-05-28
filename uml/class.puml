@@ -13,6 +13,7 @@ package "Microservices Architecture" {
             + groups: Set<Group>
             + notifications: Set<Notification>
             + evaluations: Set<Evaluation>
+            + tags: Set<Tags>
         }
 
         class Profile {
