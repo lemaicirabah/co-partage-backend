@@ -21,18 +21,14 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public Project getUserById(Long id) {
+    public Project getProjectById(Long id) {
         return projectRepository.findById(id).orElse(null);
     }
 
-//    public Project createProject(Project project) {
-//        // Save skills first
-//        if (user.getProfile() != null && user.getProfile().getSkills() != null) {
-//            Set<Skill> skills = user.getProfile().getSkills();
-//            skillRepository.saveAll(skills);
-//        }
-//        return userRepository.save(user);
-//    }
+    public Project createProject(Project project) {
+        return projectRepository.save(project);
+    }
+
 
 
 
