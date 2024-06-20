@@ -25,7 +25,6 @@ public class Project {
     private Long creator;
 
     @ElementCollection
-    @NotEmpty(message = "Project must have at least one member")
     private Set<Long> members;
 
     @ElementCollection
@@ -81,9 +80,9 @@ public class Project {
         return evaluations;
     }
 
-//    public void setEvaluations(Set<Long> evaluations) {
-//        this.evaluations = evaluations;
-//    }
+    public void setEvaluations(Set<Long> evaluations) {
+        this.evaluations = evaluations;
+    }
 
     public Set<Task> getTasks() {
         return tasks;

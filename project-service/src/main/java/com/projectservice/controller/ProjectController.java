@@ -36,19 +36,14 @@ public class ProjectController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createProject(@Valid @RequestBody Project project) {
+    public ResponseEntity<?> createProject( @Valid  @RequestBody Project project) {
         return ResponseEntity.ok(projectService.createProject(project));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project updatedProject) {
-
+    public ResponseEntity<?> updateProject(@PathVariable Long id, @Valid @RequestBody Project updatedProject) throws ProjectException {
         Project project = projectService.updateProject(id, updatedProject);
-
-        if(project != null){
-            return ResponseEntity.ok(project);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(project);
     }
 
     @DeleteMapping("/{id}")
@@ -69,7 +64,7 @@ public class ProjectController {
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put("error", error.getDefaultMessage()));
+                errors.put("messageError", error.getDefaultMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
