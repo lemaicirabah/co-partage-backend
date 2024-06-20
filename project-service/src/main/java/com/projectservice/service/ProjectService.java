@@ -25,8 +25,10 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public Project getProjectById(Long id) {
-        return projectRepository.findById(id).orElse(null);
+    public Project getProjectById(Long id) throws ProjectException {
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new ProjectException(
+                        new ErrorResponse("Project with id " + id + " does not exist" , HttpStatus.NOT_FOUND)));
     }
 
     public Project createProject(Project project) {
@@ -74,23 +76,12 @@ public class ProjectService {
                         new ErrorResponse("Project with id " + projectId + " does not exist" , HttpStatus.NOT_FOUND)));
 
         // Supprimer le projet
-        try {
-            projectRepository.delete(project);
-        }catch (Exception e){
-            throw new ProjectException(
-                    new ErrorResponse("An error occurred while deleting project id: " + projectId, HttpStatus.INTERNAL_SERVER_ERROR));
-        }
+        projectRepository.delete(project);
     }
 
     @Transactional
-    public void deleteAllProjects() throws ProjectException {
-        try {
-            projectRepository.deleteAll();
-        }catch (Exception e){
-            throw new ProjectException(
-                    new ErrorResponse("An error occurred while deleting all projects", HttpStatus.INTERNAL_SERVER_ERROR));
-        }
-
+    public void deleteAllProjects(){
+        projectRepository.deleteAll();
     }
 
 }

@@ -1,6 +1,9 @@
 package com.projectservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,19 +16,23 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Title is mandatory")
     private String title;
 
     private String description;
 
+    @NotNull(message = "Creator is mandatory")
     private Long creator;
 
     @ElementCollection
+    @NotEmpty(message = "Project must have at least one member")
     private Set<Long> members;
 
     @ElementCollection
     private Set<Long> evaluations;
 
     @OneToMany(cascade = CascadeType.ALL) // Cascade save operations
+    @Valid
     private Set<Task> tasks;
 
     // Getters and setters

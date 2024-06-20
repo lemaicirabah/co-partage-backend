@@ -1,6 +1,8 @@
 package com.projectservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 @Entity
@@ -10,12 +12,14 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Task title is mandatory")
     private String title;
 
     private String description;
 
     private Long assignee;
 
+    @NotNull(message = "Task status is mandatory")
     private TaskStatus status;
 
     private Date deadline;
