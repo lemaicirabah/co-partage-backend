@@ -76,7 +76,7 @@ public class Project {
         this.evaluations = evaluations;
     }
 
-    public Set<Task> getSkills() {
+    public Set<Task> getTasks() {
         return tasks;
     }
 
