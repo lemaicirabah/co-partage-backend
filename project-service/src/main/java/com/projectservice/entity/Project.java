@@ -1,6 +1,8 @@
 package com.projectservice.entity;
 
 import jakarta.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -72,16 +74,16 @@ public class Project {
         return evaluations;
     }
 
-    public void setEvaluations(Set<Long> evaluations) {
-        this.evaluations = evaluations;
-    }
+//    public void setEvaluations(Set<Long> evaluations) {
+//        this.evaluations = evaluations;
+//    }
 
     public Set<Task> getTasks() {
         return tasks;
     }
 
-    public void setSkills(Set<Task> skills) {
-        this.tasks = skills;
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
     }
 
 }
