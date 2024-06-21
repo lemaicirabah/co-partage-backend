@@ -52,14 +52,10 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    // Pour remplacer une ressource entière
     @Transactional
     public Project updateProject(Long projectId, Map<String, Object> updatedFields) throws ProjectException {
 
-        Project existingProject = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectException(
-                        new ErrorResponse("Project with id " + projectId + " does not exist" , HttpStatus.NOT_FOUND)));
-
+        Project existingProject = getProjectById(projectId);
 
         // Mettre à jour les propriétés du projet existant seulement pour dscription et title de projet !!!
         updatedFields.forEach((key, value) -> {
@@ -82,9 +78,7 @@ public class ProjectService {
     @Transactional
     public void deleteProjectById(Long projectId) throws ProjectException {
 
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectException(
-                        new ErrorResponse("Project with id " + projectId + " does not exist" , HttpStatus.NOT_FOUND)));
+        Project project = getProjectById(projectId);
 
         // Supprimer le projet
         projectRepository.delete(project);
@@ -98,17 +92,13 @@ public class ProjectService {
     // MEMBERS
 
     public Set<Long> getMembers(Long projectId) throws ProjectException {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectException(
-                        new ErrorResponse("Project with id " + projectId + " does not exist" , HttpStatus.NOT_FOUND)));
-
+        Project project = getProjectById(projectId);
         return project.getMembers();
     }
 
     public Long getMemberById(Long projectId, Long memberId) throws ProjectException {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectException(
-                        new ErrorResponse("Project with id " + projectId + " does not exist" , HttpStatus.NOT_FOUND)));
+
+        Project project = getProjectById(projectId);
 
         // Vérifier si le membre existe dans le Set de membres
         if (project.getMembers().contains(memberId)) {
@@ -121,9 +111,8 @@ public class ProjectService {
 
     @Transactional
     public Set<Long> addMembers(Long projectId, Set<Long> newMembers) throws ProjectException {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectException(
-                        new ErrorResponse("Project with id " + projectId + " does not exist", HttpStatus.NOT_FOUND)));
+
+        Project project = getProjectById(projectId);
 
         project.getMembers().addAll(newMembers);
         projectRepository.save(project);
@@ -132,9 +121,8 @@ public class ProjectService {
 
     @Transactional
     public void deleteMemberById(Long projectId, Long memberId) throws ProjectException {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectException(
-                        new ErrorResponse("Project with id " + projectId + " does not exist", HttpStatus.NOT_FOUND)));
+
+        Project project = getProjectById(projectId);
 
         if (project.getMembers().contains(memberId)) {
             project.getMembers().remove(memberId);
@@ -143,6 +131,14 @@ public class ProjectService {
             throw new ProjectException(
                     new ErrorResponse("Member with id " + memberId + " does not exist in project " + projectId, HttpStatus.NOT_FOUND));
         }
+    }
+
+    // TASKS
+
+    public Set<Task> getTasks(Long projectId){
+
+
+        return null;
     }
 
 
