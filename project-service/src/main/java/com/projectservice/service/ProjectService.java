@@ -136,9 +136,32 @@ public class ProjectService {
     // TASKS
 
     public Set<Task> getTasks(Long projectId){
+        Project project = getProjectById(projectId);
+        return project.getTasks();
+    }
+
+    public Task getTaskById(Long projectId, Long taskId)  {
+
+        Project project = getProjectById(projectId);
+        Task task = getTaskById(taskId);
+
+        if(project.getTasks().contains(task)){
+            return task;
+        }
+
+        throw new ProjectException(
+                new ErrorResponse("Task with id " + taskId + " does not belong to project with id " + projectId, HttpStatus.BAD_REQUEST));
+
+    }
 
 
-        return null;
+
+    private Task getTaskById( Long taskId)  {
+
+        return taskRepository.findById(taskId)
+                .orElseThrow(() -> new ProjectException(
+                        new ErrorResponse("Task with id " + taskId + " does not exist" , HttpStatus.NOT_FOUND)));
+
     }
 
 
