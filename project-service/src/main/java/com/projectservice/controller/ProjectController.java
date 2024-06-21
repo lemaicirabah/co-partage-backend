@@ -1,6 +1,7 @@
 package com.projectservice.controller;
 
 import com.projectservice.entity.Project;
+import com.projectservice.entity.Task;
 import com.projectservice.service.ProjectException;
 import com.projectservice.service.ProjectService;
 import jakarta.validation.Valid;
@@ -86,6 +87,37 @@ public class ProjectController {
     }
 
     // TASKS
+
+    @GetMapping("/{id}/tasks")
+    public ResponseEntity<?> getProjectTasks(@PathVariable Long id) throws ProjectException {
+        Set<Task> tasks = projectService.getTasks(id);
+        return ResponseEntity.ok(tasks);
+    }
+
+    @GetMapping("/{projectId}/tasks/{taskId}")
+    public ResponseEntity<?> getProjectTasks(@PathVariable Long projectId, @PathVariable Long taskId) throws ProjectException {
+        Task task = projectService.getTaskById(projectId, taskId);
+        return ResponseEntity.ok(task);
+    }
+
+    @PostMapping("/{projectId}/tasks")
+    public ResponseEntity<Task> createTask(@PathVariable Long projectId, @Valid @RequestBody Task task) {
+        Task createdTask = projectService.createTask(projectId, task);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
+    }
+
+    @DeleteMapping("/{projectId}/tasks/{taskId}")
+    public ResponseEntity<?> deleteTaskById(@PathVariable Long projectId, @PathVariable Long taskId) {
+
+        projectService.deleteTaskById(projectId, taskId);
+        return  ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{projectId}/tasks/{taskId}")
+    public ResponseEntity<?> updateTask(@PathVariable Long projectId, @PathVariable Long taskId, @RequestBody Map<String, Object> updatedFields ) throws ProjectException {
+        Project project = projectService.updateTask(projectId, taskId, updatedFields);
+        return ResponseEntity.noContent().build();
+    }
 
 
     // ExceptionHandlers

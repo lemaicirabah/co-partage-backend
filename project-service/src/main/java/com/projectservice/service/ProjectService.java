@@ -154,6 +154,49 @@ public class ProjectService {
 
     }
 
+    @Transactional
+    public Task createTask(Long projectId, Task task)  {
+
+        Project project = getProjectById(projectId);
+        project.getTasks().add(task);
+        projectRepository.save(project);
+        return task;
+    }
+
+    @Transactional
+    public void deleteTaskById(Long projectId, Long taskId)  {
+        Project project = getProjectById(projectId);
+        Task task = getTaskById(taskId);
+        project.getTasks().remove(task);
+        projectRepository.save(project);
+    }
+
+    @Transactional
+    public Project updateTask(Long projectId, Long taskId, Map<String, Object> updatedFields) throws ProjectException {
+
+        Project project = getProjectById(projectId);
+
+        // Recherche de la tâche spécifique par son ID dans le projet
+        Task taskToUpdate = project.getTasks().stream()
+                .filter(task -> task.getId().equals(taskId))
+                .findFirst()
+                .orElseThrow(() -> new ProjectException(
+                        new ErrorResponse("Task with id " + taskId + " not found in project with id " + projectId, HttpStatus.NOT_FOUND)));
+
+        // Mise à jour des propriétés de la tâche seulement si elles sont présentes dans le Map
+        updatedFields.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(Task.class, key);
+            if (field != null) {
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, taskToUpdate, value);
+            }
+        });
+
+        // Sauvegarder le projet après la mise à jour de la tâche
+        return projectRepository.save(project);
+
+    }
+
 
 
     private Task getTaskById( Long taskId)  {
