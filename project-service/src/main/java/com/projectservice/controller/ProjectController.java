@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/co-partage/projects")
@@ -29,7 +30,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) throws ProjectException {
+    public ResponseEntity<?> getProjectById(@PathVariable Long id) throws ProjectException {
         Project project = projectService.getProjectById(id);
         return ResponseEntity.ok(project);
     }
@@ -41,8 +42,8 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProject(@PathVariable Long id, @Valid @RequestBody Project updatedProject) throws ProjectException {
-        Project project = projectService.updateProject(id, updatedProject);
+    public ResponseEntity<?> updateProject(@PathVariable Long id, @RequestBody Map<String, Object> updatedFields ) throws ProjectException {
+        Project project = projectService.updateProject(id, updatedFields);
         return ResponseEntity.ok(project);
     }
 
@@ -57,6 +58,33 @@ public class ProjectController {
         projectService.deleteAllProjects();
         return ResponseEntity.noContent().build();
     }
+
+    // MEMBERS
+
+    @GetMapping("/{id}/members")
+    public ResponseEntity<?> getProjectMembers(@PathVariable Long id) throws ProjectException {
+        Set<Long> members = projectService.getMembers(id);
+        return ResponseEntity.ok(members);
+    }
+
+    @GetMapping("/{projectId}/members/{membersId}")
+    public ResponseEntity<?> getProjectMembers(@PathVariable Long projectId ,@PathVariable Long membersId) throws ProjectException {
+        Long member = projectService.getMemberById(projectId, membersId);
+        return ResponseEntity.ok(member);
+    }
+
+    @PostMapping("/{projectId}/members")
+    public ResponseEntity<?> addMembers(@PathVariable Long projectId, @RequestBody Set<Long> newMembers) throws ProjectException {
+        Set<Long> updatedMembers = projectService.addMembers(projectId, newMembers);
+        return ResponseEntity.ok(updatedMembers);
+    }
+
+    @DeleteMapping("/{projectId}/members/{memberId}")
+    public ResponseEntity<?> deleteMember(@PathVariable Long projectId, @PathVariable Long memberId) throws ProjectException {
+        projectService.deleteMemberById(projectId, memberId);
+        return ResponseEntity.noContent().build();
+    }
+
 
     // ExceptionHandlers
 

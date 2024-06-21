@@ -2,6 +2,7 @@ package com.projectservice.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -22,6 +23,7 @@ public class Task {
     @NotNull(message = "Task status is mandatory")
     private TaskStatus status;
 
+    @DateTimeFormat
     private Date deadline;
 
 

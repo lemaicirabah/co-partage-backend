@@ -1,6 +1,6 @@
 package com.projectservice.service;
 
-public class ProjectException extends Exception{
+public class ProjectException extends RuntimeException{
 
     private final ErrorResponse errorResponse;
 
