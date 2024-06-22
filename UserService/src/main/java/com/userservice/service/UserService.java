@@ -1,7 +1,9 @@
 package com.userservice.service;
 
+import com.userservice.dto.UserDto;
 import com.userservice.entity.Skill;
 import com.userservice.entity.User;
+import com.userservice.mapper.UserMapper;
 import com.userservice.repository.SkillRepository;
 import com.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -19,49 +22,56 @@ public class UserService {
     @Autowired
     private SkillRepository skillRepository;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(UserMapper.INSTANCE::userToUserDto).collect(Collectors.toList());
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public UserDto getUserById(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        return UserMapper.INSTANCE.userToUserDto(user);
     }
 
-    public User createUser(User user) {
-        // Save skills first
+    public UserDto createUser(UserDto userDto) {
+        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
         if (user.getProfile() != null && user.getProfile().getSkills() != null) {
             Set<Skill> skills = user.getProfile().getSkills();
             skillRepository.saveAll(skills);
         }
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return UserMapper.INSTANCE.userToUserDto(savedUser);
     }
 
-    public User updateUser(Long id, User userDetails) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user != null) {
-            user.setUsername(userDetails.getUsername());
-            user.setEmail(userDetails.getEmail());
-            user.setPassword(userDetails.getPassword());
-            user.setProfile(userDetails.getProfile());
-            user.setProjects(userDetails.getProjects());
-            user.setGroups(userDetails.getGroups());
-            user.setNotifications(userDetails.getNotifications());
-            user.setEvaluationsGiven(userDetails.getEvaluationsGiven());
-            user.setEvaluationsReceived(userDetails.getEvaluationsReceived());
-            user.setTags(userDetails.getTags());
+    public UserDto updateUser(Long id, UserDto userDto) {
+        User existingUser = userRepository.findById(id).orElse(null);
+        if (existingUser != null) {
+            existingUser.setUsername(userDto.getUsername());
+            existingUser.setEmail(userDto.getEmail());
+            existingUser.setPassword(userDto.getPassword());
+            existingUser.setProfile(UserMapper.INSTANCE.userDtoToUser(userDto).getProfile());
+            existingUser.setProjects(UserMapper.INSTANCE.userDtoToUser(userDto).getProjects());
+            existingUser.setGroups(UserMapper.INSTANCE.userDtoToUser(userDto).getGroups());
+            existingUser.setNotifications(UserMapper.INSTANCE.userDtoToUser(userDto).getNotifications());
+            existingUser.setEvaluationsGiven(UserMapper.INSTANCE.userDtoToUser(userDto).getEvaluationsGiven());
+            existingUser.setEvaluationsReceived(UserMapper.INSTANCE.userDtoToUser(userDto).getEvaluationsReceived());
+            existingUser.setTags(UserMapper.INSTANCE.userDtoToUser(userDto).getTags());
 
-            // Save skills first
-            if (user.getProfile() != null && user.getProfile().getSkills() != null) {
-                Set<Skill> skills = user.getProfile().getSkills();
+            if (existingUser.getProfile() != null && existingUser.getProfile().getSkills() != null) {
+                Set<Skill> skills = existingUser.getProfile().getSkills();
                 skillRepository.saveAll(skills);
             }
 
-            return userRepository.save(user);
+            User updatedUser = userRepository.save(existingUser);
+            return UserMapper.INSTANCE.userToUserDto(updatedUser);
         }
         return null;
     }
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public void deleteAllUsers() {
+        userRepository.deleteAll();
     }
 }
