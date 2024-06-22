@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
     @Autowired
     private UserService userService;
 
@@ -21,7 +22,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         User existingUser = userService.findByUsername(user.getUsername());
-        // Implement login logic
-        return ResponseEntity.ok("Login successful");
+        if (existingUser != null && userService.checkPassword(user.getPassword(), existingUser.getPassword())) {
+            // Generate a JWT token here and return it
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(401).body("Invalid username or password");
+        }
     }
 }
