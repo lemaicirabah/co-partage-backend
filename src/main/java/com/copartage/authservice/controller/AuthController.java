@@ -1,6 +1,5 @@
 package com.copartage.authservice.controller;
 
-import com.copartage.authservice.util.TokenBlacklist;
 import com.copartage.authservice.model.User;
 import com.copartage.authservice.service.UserService;
 import com.copartage.authservice.util.JwtUtil;
@@ -18,13 +17,14 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Autowired
-    private TokenBlacklist tokenBlacklist;
-
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
-        User savedUser = userService.saveUser(user);
-        return ResponseEntity.ok(savedUser);
+        try {
+            User savedUser = userService.saveUser(user);
+            return ResponseEntity.ok(savedUser);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/login")
@@ -40,7 +40,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader(name = "Authorization") String token) {
-        tokenBlacklist.addToken(token);
+        // Optionally: Invalidate the token in server-side (e.g., add to blacklist)
         return ResponseEntity.ok("Logout successful");
     }
 }
