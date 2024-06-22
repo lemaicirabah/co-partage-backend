@@ -10,7 +10,7 @@
 
     <modules>
         <module>UserService</module>
-        <!-- Add other microservice modules here -->
+        <!-- Add other microservices here -->
     </modules>
 
     <dependencyManagement>
@@ -30,30 +30,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.7.1</version> <!-- Specify the version here -->
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.30</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>1.5.3.Final</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
+                <version>2.7.1</version>
             </plugin>
         </plugins>
     </build>
-</project>
 
+</project>
