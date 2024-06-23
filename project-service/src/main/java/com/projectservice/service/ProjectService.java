@@ -1,20 +1,16 @@
 package com.projectservice.service;
 
+import com.projectservice.mapper.ProjectMapper;
 import com.projectservice.repository.*;
 import com.projectservice.entity.*;
 
-import org.jetbrains.annotations.NotNull;
+import dto.ProjectDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.lang.reflect.Field;
-import org.springframework.util.ReflectionUtils;
-
-
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -25,187 +21,60 @@ public class ProjectService {
     @Autowired
     private TaskRepository taskRepository;
 
-    public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+    public List<ProjectDto> getAllProjects() {
+        List<Project> projects = projectRepository.findAll();
+        return projects.stream().map(ProjectMapper.INSTANCE::projectToProjectDto).collect(Collectors.toList());
     }
 
-    public Project getProjectById(Long projectId) throws ProjectException {
-        return projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectException(
-                        new ErrorResponse("Project with id " + projectId + " does not exist" , HttpStatus.NOT_FOUND)));
+    public ProjectDto getProjectById(Long projectId) {
+        Project project = projectRepository.findById(projectId).orElse(null);
+        return ProjectMapper.INSTANCE.projectToProjectDto(project);
     }
 
     @Transactional
-    public Project createProject(@NotNull Project project) {
+    public ProjectDto createProject(ProjectDto projectDto) {
 
-        // Vérifiez si des tâches sont présentes dans le projet
+        Project project = ProjectMapper.INSTANCE.projectDtoToProject(projectDto);
         Set<Task> tasks = project.getTasks();
-
         if (tasks != null) {
-            // Sauvegarder chaque tâche individuellement
-            for (Task task : tasks) {
-                taskRepository.save(task);
-            }
+            taskRepository.saveAll(tasks);
         }
-
-        // Sauvegarder le projet avec les tâches associées
-        return projectRepository.save(project);
+        Project savedProject = projectRepository.save(project);
+        return ProjectMapper.INSTANCE.projectToProjectDto(savedProject);
     }
 
     @Transactional
-    public Project updateProject(Long projectId, Map<String, Object> updatedFields) throws ProjectException {
+    public ProjectDto updateProject(Long projectId, ProjectDto projectDto){
 
-        Project existingProject = getProjectById(projectId);
+        Project existingProject = projectRepository.findById(projectId).orElse(null);
 
-        // Mettre à jour les propriétés du projet existant seulement pour dscription et title de projet !!!
-        updatedFields.forEach((key, value) -> {
-            if (!key.equals("title") && !key.equals("description")) {
-                throw new ProjectException(
-                        new ErrorResponse("Field " + key + " is not allowed to be updated", HttpStatus.BAD_REQUEST));
+        if (existingProject != null) {
+            Project newProject = ProjectMapper.INSTANCE.projectDtoToProject(projectDto);
+            existingProject.setTitle(newProject.getTitle());
+            existingProject.setDescription(newProject.getDescription());
+            existingProject.setMembers(newProject.getMembers());
+            existingProject.setEvaluations(newProject.getEvaluations());
+            existingProject.setTasks(newProject.getTasks());
+
+            Set<Task> newTasks = existingProject.getTasks();
+
+            if (newTasks != null) {
+                taskRepository.saveAll(newTasks);
             }
-            Field field = ReflectionUtils.findField(Project.class, key);
-            if (field != null) {
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, existingProject, value);
-            }
-        });
 
-        // Sauvegarder le projet mis à jour
-        return projectRepository.save(existingProject);
-
+            Project updatedProject = projectRepository.save(existingProject);
+            return ProjectMapper.INSTANCE.projectToProjectDto(updatedProject);
+        }
+        return null;
     }
 
     @Transactional
-    public void deleteProjectById(Long projectId) throws ProjectException {
-
-        Project project = getProjectById(projectId);
-
-        // Supprimer le projet
-        projectRepository.delete(project);
+    public void deleteProject(Long id) {
+        projectRepository.deleteById(id);
     }
 
     @Transactional
-    public void deleteAllProjects(){
+    public void deleteAllProjects() {
         projectRepository.deleteAll();
     }
-
-    // MEMBERS
-
-    public Set<Long> getMembers(Long projectId) throws ProjectException {
-        Project project = getProjectById(projectId);
-        return project.getMembers();
-    }
-
-    public Long getMemberById(Long projectId, Long memberId) throws ProjectException {
-
-        Project project = getProjectById(projectId);
-
-        // Vérifier si le membre existe dans le Set de membres
-        if (project.getMembers().contains(memberId)) {
-            return memberId;
-        } else {
-            throw new ProjectException(
-                    new ErrorResponse("Member with id " + memberId + " does not exist in project " + projectId, HttpStatus.NOT_FOUND));
-        }
-    }
-
-    @Transactional
-    public Set<Long> addMembers(Long projectId, Set<Long> newMembers) throws ProjectException {
-
-        Project project = getProjectById(projectId);
-
-        project.getMembers().addAll(newMembers);
-        projectRepository.save(project);
-        return project.getMembers();
-    }
-
-    @Transactional
-    public void deleteMemberById(Long projectId, Long memberId) throws ProjectException {
-
-        Project project = getProjectById(projectId);
-
-        if (project.getMembers().contains(memberId)) {
-            project.getMembers().remove(memberId);
-            projectRepository.save(project);
-        } else {
-            throw new ProjectException(
-                    new ErrorResponse("Member with id " + memberId + " does not exist in project " + projectId, HttpStatus.NOT_FOUND));
-        }
-    }
-
-    // TASKS
-
-    public Set<Task> getTasks(Long projectId){
-        Project project = getProjectById(projectId);
-        return project.getTasks();
-    }
-
-    public Task getTaskById(Long projectId, Long taskId)  {
-
-        Project project = getProjectById(projectId);
-        Task task = getTaskById(taskId);
-
-        if(project.getTasks().contains(task)){
-            return task;
-        }
-
-        throw new ProjectException(
-                new ErrorResponse("Task with id " + taskId + " does not belong to project with id " + projectId, HttpStatus.BAD_REQUEST));
-
-    }
-
-    @Transactional
-    public Task createTask(Long projectId, Task task)  {
-
-        Project project = getProjectById(projectId);
-        project.getTasks().add(task);
-        projectRepository.save(project);
-        return task;
-    }
-
-    @Transactional
-    public void deleteTaskById(Long projectId, Long taskId)  {
-        Project project = getProjectById(projectId);
-        Task task = getTaskById(taskId);
-        project.getTasks().remove(task);
-        projectRepository.save(project);
-    }
-
-    @Transactional
-    public Project updateTask(Long projectId, Long taskId, Map<String, Object> updatedFields) throws ProjectException {
-
-        Project project = getProjectById(projectId);
-
-        // Recherche de la tâche spécifique par son ID dans le projet
-        Task taskToUpdate = project.getTasks().stream()
-                .filter(task -> task.getId().equals(taskId))
-                .findFirst()
-                .orElseThrow(() -> new ProjectException(
-                        new ErrorResponse("Task with id " + taskId + " not found in project with id " + projectId, HttpStatus.NOT_FOUND)));
-
-        // Mise à jour des propriétés de la tâche seulement si elles sont présentes dans le Map
-        updatedFields.forEach((key, value) -> {
-            Field field = ReflectionUtils.findField(Task.class, key);
-            if (field != null) {
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, taskToUpdate, value);
-            }
-        });
-
-        // Sauvegarder le projet après la mise à jour de la tâche
-        return projectRepository.save(project);
-
-    }
-
-
-
-    private Task getTaskById( Long taskId)  {
-
-        return taskRepository.findById(taskId)
-                .orElseThrow(() -> new ProjectException(
-                        new ErrorResponse("Task with id " + taskId + " does not exist" , HttpStatus.NOT_FOUND)));
-
-    }
-
-
 }
