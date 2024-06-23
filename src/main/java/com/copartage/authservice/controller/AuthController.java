@@ -3,6 +3,7 @@ package com.copartage.authservice.controller;
 import com.copartage.authservice.model.User;
 import com.copartage.authservice.service.UserService;
 import com.copartage.authservice.util.JwtUtil;
+import com.copartage.authservice.util.TokenBlacklist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,9 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private TokenBlacklist tokenBlacklist;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
@@ -40,7 +44,8 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader(name = "Authorization") String token) {
-        // Optionally: Invalidate the token in server-side (e.g., add to blacklist)
+        String tokenWithoutBearer = token.replace("Bearer ", "");
+        tokenBlacklist.addToken(tokenWithoutBearer);
         return ResponseEntity.ok("Logout successful");
     }
 }

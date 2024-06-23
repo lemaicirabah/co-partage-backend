@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,9 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private Key key;
+
+    @Autowired
+    private TokenBlacklist tokenBlacklist;
 
     @PostConstruct
     public void init() {
@@ -37,6 +41,9 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
+        if (tokenBlacklist.isTokenBlacklisted(token)) {
+            throw new IllegalArgumentException("Token is blacklisted");
+        }
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
