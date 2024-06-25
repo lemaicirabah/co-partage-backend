@@ -10,6 +10,7 @@
 
     <modules>
         <module>UserService</module>
+        <module>AuthenticationService</module>
         <!-- Add other microservices here -->
     </modules>
 
