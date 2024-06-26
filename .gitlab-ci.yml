@@ -24,6 +24,13 @@ services:
   - name: mysql:8.0
     alias: db
     command: ["--default-authentication-plugin=mysql_native_password"]
+    entrypoint: ["/usr/bin/env", "sh", "-c"]
+    # Using a shell script to initialize the database
+    script: |
+      mkdir -p /var/lib/mysql && \
+      chown -R mysql:mysql /var/lib/mysql && \
+      mysqld --initialize-insecure --user=mysql && \
+      exec mysqld
 
 # Cache dependencies and plugins between builds
 cache:
@@ -49,13 +56,6 @@ before_script:
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS project_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS group_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS evaluation_db;"
-  # Optional: Initialize databases with schema if needed
-  # mysql -h db -uroot -proot user_db < /path/to/user_db_schema.sql
-  # mysql -h db -uroot -proot authentication_db < /path/to/authentication_db_schema.sql
-  # mysql -h db -uroot -proot notification_db < /path/to/notification_db_schema.sql
-  # mysql -h db -uroot -proot project_db < /path/to/project_db_schema.sql
-  # mysql -h db -uroot -proot group_db < /path/to/group_db_schema.sql
-  # mysql -h db -uroot -proot evaluation_db < /path/to/evaluation_db_schema.sql
 
 stages:
   - build
