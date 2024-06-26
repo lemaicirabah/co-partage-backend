@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>UserService</module>
+        <module>ProjectService</module>
         <!-- Add other microservices here -->
     </modules>
 
