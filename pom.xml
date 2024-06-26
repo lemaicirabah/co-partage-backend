@@ -11,7 +11,7 @@
     <modules>
         <module>UserService</module>
         <module>AuthenticationService</module>
-<!--        <module>ProjectService</module>-->
+        <module>ProjectService</module>
         <!-- Add other microservices here -->
     </modules>
 

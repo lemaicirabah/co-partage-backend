@@ -1,12 +1,13 @@
-package com.authenticationservice;
+package com.projectservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class AuthenticationServiceApplicationTests {
+class ProjectServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
 	}
+
 }
