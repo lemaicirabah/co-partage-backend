@@ -3,21 +3,18 @@ image: maven:3.8.5-openjdk-17-slim
 services:
   - name: mysql:8.0
     alias: db
-    command:
-      - --default-authentication-plugin=mysql_native_password
 
 variables:
   MYSQL_ROOT_PASSWORD: root
+  MYSQL_USER: root
+  MYSQL_PASSWORD: root
+  MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+  DB_HOST: db
 
 before_script:
   - apt-get update && apt-get install -y default-mysql-client
   - echo "Waiting for MySQL to be ready..."
-  - for i in `seq 1 90`; do
-      echo "Trying to connect to MySQL, attempt $i...";
-      mysql -h db -uroot -proot -e "SHOW DATABASES;" && break;
-      sleep 2;
-    done
-  - echo "Creating databases..."
+  - for i in `seq 1 30`; do mysql -h db -uroot -proot -e "SHOW DATABASES;" && break || sleep 1; done
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS user_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS authentication_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS notification_db;"
@@ -32,7 +29,7 @@ stages:
 build:
   stage: build
   script:
-    - mvn clean package
+    - mvn clean install -DskipTests
 
 test:
   stage: test
