@@ -1,5 +1,4 @@
 variables:
-  # Configuration for Maven and Java
   MAVEN_OPTS: >-
     -Dhttps.protocols=TLSv1.2
     -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
@@ -17,30 +16,20 @@ variables:
 
   MYSQL_ROOT_PASSWORD: root
 
-# Define the Docker image for the build environment
 image: maven:3.8.5-openjdk-17-slim
 
 services:
   - name: mysql:8.0
     alias: db
     command: ["--default-authentication-plugin=mysql_native_password"]
-    entrypoint: ["/usr/bin/env", "sh", "-c"]
-    # Using a shell script to initialize the database
-    script: |
-      mkdir -p /var/lib/mysql && \
-      chown -R mysql:mysql /var/lib/mysql && \
-      mysqld --initialize-insecure --user=mysql && \
-      exec mysqld
+    entrypoint: ["/entrypoint.sh"]
 
-# Cache dependencies and plugins between builds
 cache:
   paths:
     - .m2/repository
 
 before_script:
-  # Install MySQL client
   - apt-get update && apt-get install -y default-mysql-client
-  # Wait for MySQL to be ready
   - |
     function mysql_ready {
       mysqladmin ping -h db --silent;
@@ -49,7 +38,6 @@ before_script:
       echo "waiting for mysql";
       sleep 10;
     done
-  # Create necessary databases
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS user_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS authentication_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS notification_db;"
@@ -61,7 +49,6 @@ stages:
   - build
   - test
 
-# Test stage
 test:
   stage: test
   script:
@@ -69,7 +56,6 @@ test:
   only:
     - branches
 
-# Build stage
 build:
   stage: build
   script:
