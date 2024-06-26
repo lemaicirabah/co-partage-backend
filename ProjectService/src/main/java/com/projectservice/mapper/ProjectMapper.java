@@ -1,7 +1,7 @@
 package com.projectservice.mapper;
 
 import com.projectservice.entity.Project;
-import dto.ProjectDto;
+import com.projectservice.dto.ProjectDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

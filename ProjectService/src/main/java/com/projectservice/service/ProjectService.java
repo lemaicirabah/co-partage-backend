@@ -4,7 +4,7 @@ import com.projectservice.mapper.ProjectMapper;
 import com.projectservice.repository.*;
 import com.projectservice.entity.*;
 
-import dto.ProjectDto;
+import com.projectservice.dto.ProjectDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

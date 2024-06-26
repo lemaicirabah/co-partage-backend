@@ -1,4 +1,4 @@
-package dto;
+package com.projectservice.dto;
 
 import com.projectservice.entity.TaskStatus;
 
