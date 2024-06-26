@@ -27,18 +27,14 @@ cache:
 test:
   stage: test
   script:
-    # - 'cd backend'
     - 'mvn $MAVEN_CLI_OPTS test'
   only:
-    variables:
-      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - branches
 
 # Build stage
 build:
   stage: build
   script:
-    # - 'cd backend'
     - 'mvn $MAVEN_CLI_OPTS clean package'
   only:
-    variables:
-      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - branches
