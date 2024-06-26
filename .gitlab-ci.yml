@@ -18,7 +18,7 @@ variables:
   MYSQL_ROOT_PASSWORD: root
 
 # Define the Docker image for the build environment
-image: maven:3.8.7-openjdk-17
+image: maven:3.8.3-openjdk-17
 
 services:
   - name: mysql:8.0
