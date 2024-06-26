@@ -23,6 +23,12 @@ image: maven:3-openjdk-17
 services:
   - name: mysql:8.0
     alias: db
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
 # Cache dependencies and plugins between builds
 cache:
@@ -32,6 +38,8 @@ cache:
 before_script:
   # Install MySQL client
   - apt-get update && apt-get install -y mysql-client
+  # Check MySQL service logs
+  - docker logs $(docker ps -q --filter "name=db")
   # Wait for MySQL to be ready
   - until mysql -h db -uroot -proot -e "SHOW DATABASES"; do echo "waiting for mysql"; sleep 10; done
   # Create necessary databases
@@ -41,12 +49,13 @@ before_script:
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS project_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS group_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS evaluation_db;"
-
   # Optional: Initialize databases with schema if needed
   # mysql -h db -uroot -proot user_db < /path/to/user_db_schema.sql
   # mysql -h db -uroot -proot authentication_db < /path/to/authentication_db_schema.sql
   # mysql -h db -uroot -proot notification_db < /path/to/notification_db_schema.sql
   # mysql -h db -uroot -proot project_db < /path/to/project_db_schema.sql
+  # mysql -h db -uroot -proot group_db < /path/to/group_db_schema.sql
+  # mysql -h db -uroot -proot evaluation_db < /path/to/evaluation_db_schema.sql
 
 stages:
   - build
