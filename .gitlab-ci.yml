@@ -1,44 +1,16 @@
-variables:
-  MAVEN_OPTS: >-
-    -Dhttps.protocols=TLSv1.2
-    -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
-    -Dorg.slf4j.simpleLogger.showDateTime=true
-    -Djava.awt.headless=true
-
-  MAVEN_CLI_OPTS: >-
-    --batch-mode
-    --errors
-    --fail-at-end
-    --show-version
-    --no-transfer-progress
-    -DinstallAtEnd=true
-    -DdeployAtEnd=true
-
-  MYSQL_ROOT_PASSWORD: root
-
 image: maven:3.8.5-openjdk-17-slim
 
 services:
   - name: mysql:8.0
     alias: db
-    command: ["--default-authentication-plugin=mysql_native_password"]
-    entrypoint: ["/entrypoint.sh"]
 
-cache:
-  paths:
-    - .m2/repository
+variables:
+  MYSQL_ROOT_PASSWORD: root
 
 before_script:
   - apt-get update && apt-get install -y default-mysql-client
-  - |
-    function mysql_ready() {
-      mysqladmin ping -h db --silent
-    }
-    until mysql_ready; do
-      echo "waiting for mysql"
-      sleep 5
-    done
-  - echo "MySQL is ready"
+  - echo "Waiting for MySQL to be ready..."
+  - for i in `seq 1 30`; do mysql -h db -uroot -proot -e "SHOW DATABASES;" && break || sleep 1; done
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS user_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS authentication_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS notification_db;"
@@ -50,16 +22,12 @@ stages:
   - build
   - test
 
-test:
-  stage: test
-  script:
-    - 'mvn $MAVEN_CLI_OPTS test'
-  only:
-    - branches
-
 build:
   stage: build
   script:
-    - 'mvn $MAVEN_CLI_OPTS clean package'
-  only:
-    - branches
+    - mvn clean package
+
+test:
+  stage: test
+  script:
+    - mvn test
