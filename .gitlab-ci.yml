@@ -18,7 +18,7 @@ variables:
   MYSQL_ROOT_PASSWORD: root
 
 # Define the Docker image for the build environment
-image: maven:3-openjdk-17
+image: maven:3.8.4-jdk-11-slim
 
 services:
   - name: mysql:8.0
@@ -32,7 +32,7 @@ cache:
 
 before_script:
   # Install MySQL client
-  - apt-get update && apt-get install -y mysql-client
+  - apt-get update && apt-get install -y default-mysql-client
   # Wait for MySQL to be ready
   - until mysql -h db -uroot -proot -e "SHOW DATABASES"; do echo "waiting for mysql"; sleep 10; done
   # Create necessary databases
