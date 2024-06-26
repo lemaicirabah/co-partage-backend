@@ -31,13 +31,14 @@ cache:
 before_script:
   - apt-get update && apt-get install -y default-mysql-client
   - |
-    function mysql_ready {
-      mysqladmin ping -h db --silent;
+    function mysql_ready() {
+      mysqladmin ping -h db --silent
     }
     until mysql_ready; do
-      echo "waiting for mysql";
-      sleep 10;
+      echo "waiting for mysql"
+      sleep 5
     done
+  - echo "MySQL is ready"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS user_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS authentication_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS notification_db;"
