@@ -34,7 +34,14 @@ before_script:
   # Install MySQL client
   - apt-get update && apt-get install -y default-mysql-client
   # Wait for MySQL to be ready
-  - until mysql -h db -uroot -proot -e "SHOW DATABASES"; do echo "waiting for mysql"; sleep 10; done
+  - |
+    function mysql_ready {
+      mysqladmin ping -h db --silent;
+    }
+    until mysql_ready; do
+      echo "waiting for mysql";
+      sleep 10;
+    done
   # Create necessary databases
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS user_db;"
   - mysql -h db -uroot -proot -e "CREATE DATABASE IF NOT EXISTS authentication_db;"
