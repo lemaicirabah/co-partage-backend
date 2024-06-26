@@ -10,7 +10,6 @@
 
     <modules>
         <module>ProjectService</module>
-        <!-- Add other microservices here -->
     </modules>
 
     <dependencyManagement>
