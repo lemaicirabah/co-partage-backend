@@ -4,6 +4,16 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### other microservices ###
+UserService/
+AuthenticationService/
+GroupService/
+NotificationService/
+EvaluationService/
+
+### parent pom.xml ###
+pom.xml
+
 ### STS ###
 .apt_generated
 .classpath
