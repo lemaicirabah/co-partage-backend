@@ -12,7 +12,7 @@ NotificationService/
 EvaluationService/
 
 ### parent pom.xml ###
-pom.xml
+/pom.xml
 
 ### STS ###
 .apt_generated
