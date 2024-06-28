@@ -11,6 +11,49 @@
 			"name": "UserService",
 			"item": [
 				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{$randomUserName}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"password\": \"{{$randomPassword}}\",\n  \"profile\": {\n    \"firstName\": \"{{$randomFirstName}}\",\n    \"lastName\": \"{{$randomLastName}}\",\n    \"bio\": \"{{$randomCatchPhraseDescriptor}}\",\n    \"skills\": [\n      {\n        \"name\": \"{{$randomJobTitle}}\",\n        \"description\": \"{{$randomJobDescriptor}}\"\n      }\n    ]\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/co-partage/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"co-partage",
+								"users"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
 					"name": "Retrieve all users",
 					"event": [
 						{
@@ -54,34 +97,10 @@
 					"response": []
 				},
 				{
-					"name": "Delete user by id",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Successful DELETE request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
-									"});",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
+					"name": "Retrieve user by id",
 					"request": {
-						"method": "DELETE",
+						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "{{base_url}}/co-partage/users/{{user_id}}",
 							"host": [
@@ -92,8 +111,7 @@
 								"users",
 								"{{user_id}}"
 							]
-						},
-						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+						}
 					},
 					"response": []
 				},
@@ -142,14 +160,14 @@
 					"response": []
 				},
 				{
-					"name": "Create user",
+					"name": "Delete user by id",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Successful POST request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
 									"});",
 									""
 								],
@@ -159,36 +177,17 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"{{$randomUserName}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"password\": \"{{$randomPassword}}\",\n  \"profile\": {\n    \"firstName\": \"{{$randomFirstName}}\",\n    \"lastName\": \"{{$randomLastName}}\",\n    \"bio\": \"{{$randomCatchPhraseDescriptor}}\",\n    \"skills\": [\n      {\n        \"name\": \"{{$randomJobTitle}}\",\n        \"description\": \"{{$randomJobDescriptor}}\"\n      }\n    ]\n  }\n}\n",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/co-partage/users",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"co-partage",
-								"users"
-							]
-						},
-						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
-					},
-					"response": []
-				},
-				{
-					"name": "Retrieve user by id",
-					"request": {
-						"method": "GET",
-						"header": [],
 						"url": {
 							"raw": "{{base_url}}/co-partage/users/{{user_id}}",
 							"host": [
@@ -199,7 +198,8 @@
 								"users",
 								"{{user_id}}"
 							]
-						}
+						},
+						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
 					},
 					"response": []
 				}
@@ -598,7 +598,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\": \"{{$randomFirstName}}\",\n    \"email\": \"{{$randomEmail}}\",\n    \"password\": \"itiswhatitis\"\n}",
+							"raw": "{\n\t\"username\": \"{{$randomFirstName}}\",\n    \"email\": \"{{$randomEmail}}\",\n    \"password\": \"FindMe$9906#\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -658,7 +658,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\": \"Laurianne\",\n    \"password\": \"itiswhatitis\"\n}",
+							"raw": "{\n\t\"username\": \"Bradley\",\n    \"password\": \"FindMe$9906#\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -727,6 +727,253 @@
 							]
 						},
 						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ProjectService",
+			"item": [
+				{
+					"name": "Create Project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"{{$randomJobTitle}}\",\n    \"description\": \"{{$randomStreetName}}\",\n    \"creator\": {{$randomInt}},\n    \"members\": [{{$randomInt}}, 1],\n    \"tasks\": [\n        {\n            \"title\": \"{{$randomJobTitle}}\",\n            \"description\": \"{{$randomStreetName}}\",\n            \"assignee\": 1,\n            \"status\": \"TODO\",\n            \"deadline\": \"2024-12-31T00:00:00Z\"\n        },\n        {\n            \"title\": \"{{$randomJobTitle}}\",\n            \"description\": \"{{$randomStreetName}}\",\n            \"assignee\": 1,\n            \"status\": \"IN_PROGRESS\",\n            \"deadline\": \"2024-12-31T00:00:00Z\"\n        }\n    ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8084/co-partage/projects",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"co-partage",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all projects",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8084/co-partage/projects",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"co-partage",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get project by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8084/co-partage/projects/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"co-partage",
+								"projects",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete project by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8084/co-partage/projects/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"co-partage",
+								"projects",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete all projects",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8084/co-partage/projects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"co-partage",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 4,\n    \"title\": \"Nouveau Projet\",\n    \"description\": \"Allo je suis la nouvelle description zzzzzzzz\",\n    \"creator\": 1,\n    \"members\": [\n        2,\n        3,\n        4\n    ],\n    \"tasks\": [\n        {\n            \"id\": 2,\n            \"title\": \"Tâche 2\",\n            \"description\": \"Description de la tâche 2\",\n            \"assignee\": 3,\n            \"status\": \"IN_PROGRESS\",\n            \"deadline\": \"2024-12-31T00:00:00.000+00:00\"\n        },\n        {\n            \"id\": 4,\n            \"title\": \"Nouvelle Tâche\",\n            \"description\": \"Description de la nouvelle tâche\",\n            \"assignee\": 1,\n            \"status\": \"TODO\",\n            \"deadline\": \"2024-12-31T00:00:00.000+00:00\"\n        },\n        {\n            \"id\": 3,\n            \"title\": \"Allo je suis le nouveau titre\",\n            \"description\": \"Allo je suis la nouvelle description\",\n            \"assignee\": 2,\n            \"status\": \"TODO\",\n            \"deadline\": \"2024-12-31T00:00:00.000+00:00\"\n        },\n        {\n            \"id\": 6,\n            \"title\": \"Nouvelle Tâche\",\n            \"description\": \"Description de la nouvelle tâche\",\n            \"assignee\": 1,\n            \"status\": \"TODO\",\n            \"deadline\": \"2024-12-31T00:00:00.000+00:00\"\n        }\n    ],\n    \"evaluations\": [\n        4,\n        5\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8084/co-partage/projects/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"co-partage",
+								"projects",
+								"1"
+							]
+						}
 					},
 					"response": []
 				}
