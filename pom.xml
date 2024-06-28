@@ -9,6 +9,9 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>UserService</module>
+        <module>AuthenticationService</module>
+        <module>ProjectService</module>
         <!-- Add other microservices here -->
     </modules>
 
@@ -35,4 +38,3 @@
     </build>
 
 </project>
-
