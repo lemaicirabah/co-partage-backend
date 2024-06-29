@@ -6,6 +6,9 @@ import com.authenticationservice.entity.User;
 import com.authenticationservice.service.MyUserDetailsService;
 import com.authenticationservice.service.UserService;
 import com.authenticationservice.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,10 +16,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping("/authentication")
+@Tag(name = "Authentication", description = "Authentication management APIs")
 public class AuthenticationController {
 
     @Autowired
@@ -32,6 +34,7 @@ public class AuthenticationController {
     private UserService userService;
 
     @PostMapping("/register")
+    @Operation(summary = "Register a new user", description = "Registers a new user with the provided details")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
         try {
             User registeredUser = userService.registerUser(user);
@@ -42,6 +45,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "User login", description = "Authenticates the user and returns a JWT token")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
             authenticationManager.authenticate(
@@ -58,6 +62,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/validate")
+    @Operation(summary = "Validate a JWT token", description = "Validates the provided JWT token")
     public ResponseEntity<?> validateToken(@RequestParam("token") String token) {
         try {
             String username = jwtUtil.extractUsername(token);
