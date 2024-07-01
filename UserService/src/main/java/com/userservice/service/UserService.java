@@ -29,17 +29,12 @@ public class UserService {
 
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);
-        return UserMapper.INSTANCE.userToUserDto(user);
+        return user != null ? UserMapper.INSTANCE.userToUserDto(user) : null;
     }
 
     public UserDto createUser(UserDto userDto) {
         User user = UserMapper.INSTANCE.userDtoToUser(userDto);
-        if (user.getProfile() != null && user.getProfile().getSkills() != null) {
-            Set<Skill> skills = user.getProfile().getSkills();
-            skillRepository.saveAll(skills);
-        }
-        User savedUser = userRepository.save(user);
-        return UserMapper.INSTANCE.userToUserDto(savedUser);
+        return getUserDto(user);
     }
 
     public UserDto updateUser(Long id, UserDto userDto) {
@@ -56,15 +51,19 @@ public class UserService {
             existingUser.setEvaluationsReceived(UserMapper.INSTANCE.userDtoToUser(userDto).getEvaluationsReceived());
             existingUser.setTags(UserMapper.INSTANCE.userDtoToUser(userDto).getTags());
 
-            if (existingUser.getProfile() != null && existingUser.getProfile().getSkills() != null) {
-                Set<Skill> skills = existingUser.getProfile().getSkills();
-                skillRepository.saveAll(skills);
-            }
-
-            User updatedUser = userRepository.save(existingUser);
-            return UserMapper.INSTANCE.userToUserDto(updatedUser);
+            return getUserDto(existingUser);
         }
         return null;
+    }
+
+    private UserDto getUserDto(User existingUser) {
+        if (existingUser.getProfile() != null && existingUser.getProfile().getSkills() != null) {
+            Set<Skill> skills = existingUser.getProfile().getSkills();
+            skillRepository.saveAll(skills);
+        }
+
+        User updatedUser = userRepository.save(existingUser);
+        return UserMapper.INSTANCE.userToUserDto(updatedUser);
     }
 
     public void deleteUser(Long id) {
