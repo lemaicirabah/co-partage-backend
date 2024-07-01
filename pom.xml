@@ -12,6 +12,8 @@
         <module>UserService</module>
         <module>AuthenticationService</module>
         <module>ProjectService</module>
+        <module>EurekaServer</module>
+        <module>ApiGateway</module>
         <!-- Add other microservices here -->
     </modules>
 
@@ -21,6 +23,14 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>2.7.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Hoxton.SR8</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
