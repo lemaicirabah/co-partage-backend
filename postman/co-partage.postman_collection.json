@@ -561,7 +561,7 @@
 			]
 		},
 		{
-			"name": "Authentication-service",
+			"name": "AuthenticationService",
 			"item": [
 				{
 					"name": "Register user",
@@ -606,11 +606,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8083/authentication/register",
+							"raw": "{{base_url}}/authentication/register",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8083",
 							"path": [
 								"authentication",
 								"register"
@@ -666,11 +665,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8083/authentication/login",
+							"raw": "{{base_url}}/authentication/login",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8083",
 							"path": [
 								"authentication",
 								"login"
@@ -710,11 +708,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8083/authentication/validate?token={{bearer_token}}",
+							"raw": "{{base_url}}/authentication/validate?token={{bearer_token}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8083",
 							"path": [
 								"authentication",
 								"validate"
@@ -765,11 +762,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8084/co-partage/projects",
+							"raw": "{{base_url}}/co-partage/projects",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8084",
 							"path": [
 								"co-partage",
 								"projects"
@@ -798,11 +794,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8084/co-partage/projects",
+							"raw": "{{base_url}}/co-partage/projects",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8084",
 							"path": [
 								"co-partage",
 								"projects"
@@ -831,15 +826,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8084/co-partage/projects/1",
+							"raw": "{{base_url}}/co-partage/projects/{{user_id}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8084",
 							"path": [
 								"co-partage",
 								"projects",
-								"1"
+								"{{user_id}}"
 							]
 						}
 					},
@@ -875,15 +869,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8084/co-partage/projects/1",
+							"raw": "{{base_url}}/co-partage/projects/{{user_id}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8084",
 							"path": [
 								"co-partage",
 								"projects",
-								"1"
+								"{{user_id}}"
 							]
 						}
 					},
@@ -919,12 +912,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8084/co-partage/projects",
-							"protocol": "http",
+							"raw": "{{base_url}}/co-partage/projects",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8084",
 							"path": [
 								"co-partage",
 								"projects"
@@ -934,7 +925,7 @@
 					"response": []
 				},
 				{
-					"name": "Update project",
+					"name": "Update project by id",
 					"event": [
 						{
 							"listen": "test",
@@ -963,15 +954,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8084/co-partage/projects/1",
+							"raw": "{{base_url}}/co-partage/projects/{{user_id}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8084",
 							"path": [
 								"co-partage",
 								"projects",
-								"1"
+								"{{user_id}}"
 							]
 						}
 					},
@@ -1013,16 +1003,16 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "localhost:8081"
-		},
-		{
-			"key": "user_id",
-			"value": "5",
-			"type": "string"
+			"value": "localhost:8080"
 		},
 		{
 			"key": "bearer_token",
 			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "4",
 			"type": "string"
 		}
 	]
