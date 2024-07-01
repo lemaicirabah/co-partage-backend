@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -27,41 +29,63 @@ public class UserController {
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID", description = "Retrieve a user by its ID")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        UserDto userDto = userService.getUserById(id);
-        if (userDto != null) {
-            return ResponseEntity.ok(userDto);
+        try {
+            UserDto userDto = userService.getUserById(id);
+            if (userDto != null) {
+                return ResponseEntity.ok(userDto);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to retrieve user", e);
         }
-        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
     @Operation(summary = "Create a new user", description = "Create a new user")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        UserDto createdUser = userService.createUser(userDto);
-        return ResponseEntity.ok(createdUser);
+        try {
+            UserDto createdUser = userService.createUser(userDto);
+            return ResponseEntity.ok(createdUser);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
+        }
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a user", description = "Update an existing user by ID")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
-        UserDto updatedUser = userService.updateUser(id, userDto);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
+        try {
+            UserDto updatedUser = userService.updateUser(id, userDto);
+            if (updatedUser != null) {
+                return ResponseEntity.ok(updatedUser);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update user", e);
         }
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a user", description = "Delete a user by its ID")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete user", e);
+        }
     }
 
     @DeleteMapping
     @Operation(summary = "Delete all users", description = "Delete all users")
     public ResponseEntity<Void> deleteAllUsers() {
-        userService.deleteAllUsers();
-        return ResponseEntity.noContent().build();
+        try {
+            userService.deleteAllUsers();
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete all users", e);
+        }
     }
 }
