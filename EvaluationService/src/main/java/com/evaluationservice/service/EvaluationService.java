@@ -28,11 +28,11 @@ public class EvaluationService {
 
     public EvaluationDto createEvaluation(Long evaluatorId, Long evaluateeId, Long projectId, String comments, int rating) {
         // Récupérer les détails de l'évaluateur depuis le User Service
-        UserDto evaluatorDto = restTemplate.getForObject("http://USER-SERVICE/users/" + evaluatorId, UserDto.class);
+        UserDto evaluatorDto = restTemplate.getForObject("http://co-partage/users/" + evaluatorId, UserDto.class);
         // Récupérer les détails de l'évalué depuis le User Service
-        UserDto evaluateeDto = restTemplate.getForObject("http://USER-SERVICE/users/" + evaluateeId, UserDto.class);
+        UserDto evaluateeDto = restTemplate.getForObject("http://co-partage/users/" + evaluateeId, UserDto.class);
         // Récupérer les détails du projet depuis le Project Service
-        ProjectDto projectDto = restTemplate.getForObject("http://PROJECT-SERVICE/projects/" + projectId, ProjectDto.class);
+        ProjectDto projectDto = restTemplate.getForObject("http://co-partage/projects/" + projectId, ProjectDto.class);
 
         // Créer une nouvelle évaluation
         Evaluation evaluation = new Evaluation();

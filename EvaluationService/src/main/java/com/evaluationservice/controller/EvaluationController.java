@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/evaluations")
+@RequestMapping("/co-partage/evaluations")
 public class EvaluationController {
 
     @Autowired
