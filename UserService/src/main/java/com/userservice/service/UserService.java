@@ -63,6 +63,10 @@ public class UserService {
     }
 
     public UserDto createUser(UserDto userDto) {
+        // A mediter de comment mieux le faire
+        // La création du projet -> seulement sur les champs en lien sur le User
+        // Si par exemple un User veut faire de quoi avec projet -> Utiliser les endpoints de la section projet
+        // Donc sassurer de ne pas ajouter des données comme un set de projet id
         userDto.setProjects(null);
         userDto.setProjectsDetails(null);
         User user = UserMapper.INSTANCE.userDtoToUser(userDto);
