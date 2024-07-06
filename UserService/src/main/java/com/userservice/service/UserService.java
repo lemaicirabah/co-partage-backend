@@ -133,4 +133,16 @@ public class UserService {
         }
     }
 
+    public ProjectDto getProject(Long userId, Long projectId){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            if(user.getProjects() != null && user.getProjects().contains(projectId)){
+                return projectServiceClient.getProjectById(projectId);
+            }
+        }
+        return null;
+    }
+
 }

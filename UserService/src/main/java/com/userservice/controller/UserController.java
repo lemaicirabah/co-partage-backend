@@ -113,4 +113,19 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete user", e);
         }
     }
+
+    @GetMapping("/{userId}/projects/{projectId}")
+    @Operation(summary = "Get project by ID", description = "Retrieve a project by its ID")
+    public ResponseEntity<ProjectDto> getProjectById(@PathVariable Long userId, @PathVariable Long projectId) {
+        try {
+            ProjectDto projectDto = userService.getProject(userId, projectId);
+            if (projectDto != null) {
+                return ResponseEntity.ok(projectDto);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to retrieve project", e);
+        }
+    }
 }
