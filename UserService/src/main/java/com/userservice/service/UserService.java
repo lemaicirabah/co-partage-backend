@@ -63,6 +63,8 @@ public class UserService {
     }
 
     public UserDto createUser(UserDto userDto) {
+        userDto.setProjects(null);
+        userDto.setProjectsDetails(null);
         User user = UserMapper.INSTANCE.userDtoToUser(userDto);
         return getUserDto(user);
     }
