@@ -14,4 +14,5 @@ public class UserDto {
     private String password;
     private ProfileDto profile;
     private Set<Long> projects;
+    private Set<ProjectDto> projectsDetails;  // Détails des projets associés
 }

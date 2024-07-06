@@ -11,6 +11,7 @@ import com.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,8 +34,32 @@ public class UserService {
     }
 
     public UserDto getUserById(Long id) {
+
         User user = userRepository.findById(id).orElse(null);
-        return user != null ? UserMapper.INSTANCE.userToUserDto(user) : null;
+
+        if (user != null) {
+
+            UserDto userDto = UserMapper.INSTANCE.userToUserDto(user);
+
+            Set<ProjectDto> projects = getProjectDetails(user.getProjects());
+            userDto.setProjectsDetails(projects);
+
+            return userDto;
+        }
+        return null;
+    }
+
+    private Set<ProjectDto> getProjectDetails(Set<Long> projectIds) {
+        Set<ProjectDto> projects = new HashSet<>();
+        if (projectIds != null && !projectIds.isEmpty()) {
+            for (Long projectId : projectIds) {
+                ProjectDto projectDto = projectServiceClient.getProjectById(projectId);
+                if (projectDto != null) {
+                    projects.add(projectDto);
+                }
+            }
+        }
+        return projects;
     }
 
     public UserDto createUser(UserDto userDto) {
