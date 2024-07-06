@@ -53,17 +53,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{id}/projects")
-    @Operation(summary = "Create a new project", description = "Create a new prpject")
-    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto, @PathVariable Long id) {
-        try {
-            ProjectDto createdProject = userService.createProject(projectDto, id);
-            return ResponseEntity.ok(createdProject);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create project", e);
-        }
-    }
-
     @PutMapping("/{id}")
     @Operation(summary = "Update a user", description = "Update an existing user by ID")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
@@ -98,6 +87,19 @@ public class UserController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete all users", e);
+        }
+    }
+
+    // Section project *************************************************
+
+    @PostMapping("/{id}/projects")
+    @Operation(summary = "Create a new project", description = "Create a new prpject")
+    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto, @PathVariable Long id) {
+        try {
+            ProjectDto createdProject = userService.createProject(projectDto, id);
+            return ResponseEntity.ok(createdProject);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create project", e);
         }
     }
 }
