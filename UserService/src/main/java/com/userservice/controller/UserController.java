@@ -102,4 +102,15 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create project", e);
         }
     }
+
+    @DeleteMapping("/{userId}/projects/{projectId}")
+    @Operation(summary = "Delete a project", description = "Delete a project by its ID")
+    public ResponseEntity<Void> deleteProject(@PathVariable Long userId, @PathVariable Long projectId) {
+        try {
+            userService.deleteProject(userId, projectId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete user", e);
+        }
+    }
 }

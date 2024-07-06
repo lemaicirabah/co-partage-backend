@@ -117,5 +117,18 @@ public class UserService {
         return null;
     }
 
+    public void deleteProject(Long userId, Long projectId){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            if(user.getProjects() != null && user.getProjects().contains(projectId)){
+
+                projectServiceClient.deleteProject(projectId);
+                user.getProjects().remove(projectId);
+                userRepository.save(user);
+            }
+        }
+    }
 
 }
