@@ -74,11 +74,6 @@ public class UserService {
             existingUser.setEmail(userDto.getEmail());
             existingUser.setPassword(userDto.getPassword());
             existingUser.setProfile(UserMapper.INSTANCE.userDtoToUser(userDto).getProfile());
-            existingUser.setProjects(UserMapper.INSTANCE.userDtoToUser(userDto).getProjects());
-            existingUser.setGroups(UserMapper.INSTANCE.userDtoToUser(userDto).getGroups());
-            existingUser.setNotifications(UserMapper.INSTANCE.userDtoToUser(userDto).getNotifications());
-            existingUser.setEvaluationsGiven(UserMapper.INSTANCE.userDtoToUser(userDto).getEvaluationsGiven());
-            existingUser.setEvaluationsReceived(UserMapper.INSTANCE.userDtoToUser(userDto).getEvaluationsReceived());
             existingUser.setTags(UserMapper.INSTANCE.userDtoToUser(userDto).getTags());
 
             return getUserDto(existingUser);
@@ -121,4 +116,6 @@ public class UserService {
         }
         return null;
     }
+
+
 }
