@@ -13,10 +13,5 @@ public class UserDto {
     private String email;
     private String password;
     private ProfileDto profile;
-    private Set<ProjectDto> projects;
-    private Set<UserGroupDto> groups;
-    private Set<NotificationDto> notifications;
-    private Set<EvaluationDto> evaluationsGiven;
-    private Set<EvaluationDto> evaluationsReceived;
-    private Set<TagDto> tags;
+    private Set<Long> projects;
 }

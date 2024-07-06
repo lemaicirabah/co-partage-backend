@@ -1,5 +1,7 @@
 package com.userservice.service;
 
+import com.userservice.client.ProjectServiceClient;
+import com.userservice.dto.ProjectDto;
 import com.userservice.dto.UserDto;
 import com.userservice.entity.Skill;
 import com.userservice.entity.User;
@@ -21,6 +23,9 @@ public class UserService {
 
     @Autowired
     private SkillRepository skillRepository;
+
+    @Autowired
+    private ProjectServiceClient projectServiceClient;
 
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -72,5 +77,23 @@ public class UserService {
 
     public void deleteAllUsers() {
         userRepository.deleteAll();
+    }
+
+// Section project *************************************************
+
+    public ProjectDto createProject(ProjectDto projectDto, Long id){
+
+        User user = userRepository.findById(id).orElse(null);
+
+        if(user != null){
+
+            projectDto.setCreator(user.getId());
+            ProjectDto createdProject = projectServiceClient.createProject(projectDto);
+            user.getProjects().add(createdProject.getId());
+
+            userRepository.save(user);
+            return createdProject;
+        }
+        return null;
     }
 }

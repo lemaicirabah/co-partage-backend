@@ -21,8 +21,8 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     private Profile profile;
 
-    @OneToMany(mappedBy = "creator")
-    private Set<Project> projects;
+    @ElementCollection
+    private Set<Long> projects;
 
     @ManyToMany
     private Set<UserGroup> groups;

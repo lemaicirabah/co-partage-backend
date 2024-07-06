@@ -11,8 +11,7 @@ public class ProjectDto {
     private Long id;
     private String title;
     private String description;
-    private UserDto creator;
-    private Set<UserDto> members;
+    private Long creator;
+    private Set<Long> members;
     private Set<TaskDto> tasks;
-    private Set<EvaluationDto> evaluations;
 }

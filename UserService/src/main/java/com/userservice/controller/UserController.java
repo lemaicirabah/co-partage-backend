@@ -1,5 +1,6 @@
 package com.userservice.controller;
 
+import com.userservice.dto.ProjectDto;
 import com.userservice.dto.UserDto;
 import com.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,6 +50,17 @@ public class UserController {
             return ResponseEntity.ok(createdUser);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
+        }
+    }
+
+    @PostMapping("/{id}/projects")
+    @Operation(summary = "Create a new project", description = "Create a new prpject")
+    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto, @PathVariable Long id) {
+        try {
+            ProjectDto createdProject = userService.createProject(projectDto, id);
+            return ResponseEntity.ok(createdProject);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create project", e);
         }
     }
 
