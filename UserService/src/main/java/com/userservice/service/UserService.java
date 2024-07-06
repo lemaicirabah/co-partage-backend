@@ -145,4 +145,16 @@ public class UserService {
         return null;
     }
 
+    public ProjectDto updateProject(Long userId, Long projectId, ProjectDto projectDto){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            if(user.getProjects() != null && user.getProjects().contains(projectId)){
+                return projectServiceClient.updateProject(projectId, projectDto);
+            }
+        }
+        return null;
+    }
+
 }

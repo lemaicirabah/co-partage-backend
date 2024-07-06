@@ -15,4 +15,7 @@ public interface ProjectServiceClient {
 
     @DeleteMapping("/projects/{id}")
     void deleteProject(@PathVariable Long id);
+
+    @PutMapping("/projects/{id}")
+    ProjectDto updateProject(@PathVariable Long id, @RequestBody ProjectDto projectDto);
 }

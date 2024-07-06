@@ -128,4 +128,19 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to retrieve project", e);
         }
     }
+
+    @PutMapping("/{userId}/projects/{projectId}")
+    @Operation(summary = "Update a project", description = "Update an existing project by ID")
+    public ResponseEntity<ProjectDto> updateProject(@PathVariable Long userId, @PathVariable Long projectId, @RequestBody ProjectDto projectDto) {
+        try {
+            ProjectDto updatedProject = userService.updateProject(userId, projectId, projectDto);
+            if (updatedProject != null) {
+                return ResponseEntity.ok(updatedProject);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update user", e);
+        }
+    }
 }
