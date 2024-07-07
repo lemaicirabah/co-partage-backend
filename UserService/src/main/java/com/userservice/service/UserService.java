@@ -34,33 +34,10 @@ public class UserService {
     }
 
     public UserDto getUserById(Long id) {
-
         User user = userRepository.findById(id).orElse(null);
-
-        if (user != null) {
-
-            UserDto userDto = UserMapper.INSTANCE.userToUserDto(user);
-
-            Set<ProjectDto> projects = getProjectDetails(user.getProjects());
-            userDto.setProjectsDetails(projects);
-
-            return userDto;
-        }
-        return null;
+        return user != null ? UserMapper.INSTANCE.userToUserDto(user) : null;
     }
 
-    private Set<ProjectDto> getProjectDetails(Set<Long> projectIds) {
-        Set<ProjectDto> projects = new HashSet<>();
-        if (projectIds != null && !projectIds.isEmpty()) {
-            for (Long projectId : projectIds) {
-                ProjectDto projectDto = projectServiceClient.getProjectById(projectId);
-                if (projectDto != null) {
-                    projects.add(projectDto);
-                }
-            }
-        }
-        return projects;
-    }
 
     public UserDto createUser(UserDto userDto) {
         // A mediter de comment mieux le faire
@@ -68,14 +45,16 @@ public class UserService {
         // Si par exemple un User veut faire de quoi avec projet -> Utiliser les endpoints de la section projet
         // Donc sassurer de ne pas ajouter des données comme un set de projet id
         userDto.setProjects(null);
-        userDto.setProjectsDetails(null);
         User user = UserMapper.INSTANCE.userDtoToUser(userDto);
         return getUserDto(user);
     }
 
     public UserDto updateUser(Long id, UserDto userDto) {
+
         User existingUser = userRepository.findById(id).orElse(null);
+
         if (existingUser != null) {
+
             existingUser.setUsername(userDto.getUsername());
             existingUser.setEmail(userDto.getEmail());
             existingUser.setPassword(userDto.getPassword());
@@ -107,58 +86,14 @@ public class UserService {
 
 // Section project *************************************************
 
-    public ProjectDto createProject(ProjectDto projectDto, Long id){
+    public void updateProject(Long userId, Long projectId){
 
-        User user = userRepository.findById(id).orElse(null);
+        User user = userRepository.findById(userId).orElse(null);
 
         if(user != null){
-
-            projectDto.setCreator(user.getId());
-            ProjectDto createdProject = projectServiceClient.createProject(projectDto);
-            user.getProjects().add(createdProject.getId());
-
+            user.getProjects().add(projectId);
             userRepository.save(user);
-            return createdProject;
         }
-        return null;
-    }
-
-    public void deleteProject(Long userId, Long projectId){
-
-        User user = userRepository.findById(userId).orElse(null);
-
-        if(user != null){
-            if(user.getProjects() != null && user.getProjects().contains(projectId)){
-
-                projectServiceClient.deleteProject(projectId);
-                user.getProjects().remove(projectId);
-                userRepository.save(user);
-            }
-        }
-    }
-
-    public ProjectDto getProject(Long userId, Long projectId){
-
-        User user = userRepository.findById(userId).orElse(null);
-
-        if(user != null){
-            if(user.getProjects() != null && user.getProjects().contains(projectId)){
-                return projectServiceClient.getProjectById(projectId);
-            }
-        }
-        return null;
-    }
-
-    public ProjectDto updateProject(Long userId, Long projectId, ProjectDto projectDto){
-
-        User user = userRepository.findById(userId).orElse(null);
-
-        if(user != null){
-            if(user.getProjects() != null && user.getProjects().contains(projectId)){
-                return projectServiceClient.updateProject(projectId, projectDto);
-            }
-        }
-        return null;
     }
 
 }

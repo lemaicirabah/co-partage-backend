@@ -92,55 +92,14 @@ public class UserController {
 
     // Section project *************************************************
 
-    @PostMapping("/{id}/projects")
-    @Operation(summary = "Create a new project", description = "Create a new prpject")
-    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto, @PathVariable Long id) {
-        try {
-            ProjectDto createdProject = userService.createProject(projectDto, id);
-            return ResponseEntity.ok(createdProject);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create project", e);
-        }
-    }
-
-    @DeleteMapping("/{userId}/projects/{projectId}")
-    @Operation(summary = "Delete a project", description = "Delete a project by its ID")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long userId, @PathVariable Long projectId) {
-        try {
-            userService.deleteProject(userId, projectId);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete user", e);
-        }
-    }
-
-    @GetMapping("/{userId}/projects/{projectId}")
-    @Operation(summary = "Get project by ID", description = "Retrieve a project by its ID")
-    public ResponseEntity<ProjectDto> getProjectById(@PathVariable Long userId, @PathVariable Long projectId) {
-        try {
-            ProjectDto projectDto = userService.getProject(userId, projectId);
-            if (projectDto != null) {
-                return ResponseEntity.ok(projectDto);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to retrieve project", e);
-        }
-    }
-
     @PutMapping("/{userId}/projects/{projectId}")
     @Operation(summary = "Update a project", description = "Update an existing project by ID")
-    public ResponseEntity<ProjectDto> updateProject(@PathVariable Long userId, @PathVariable Long projectId, @RequestBody ProjectDto projectDto) {
+    public ResponseEntity<Void> updateProject(@PathVariable Long userId, @PathVariable Long projectId) {
         try {
-            ProjectDto updatedProject = userService.updateProject(userId, projectId, projectDto);
-            if (updatedProject != null) {
-                return ResponseEntity.ok(updatedProject);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            userService.updateProject(userId, projectId);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update user", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update project id", e);
         }
     }
 }
