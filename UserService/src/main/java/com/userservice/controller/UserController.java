@@ -92,14 +92,24 @@ public class UserController {
 
     // Section project *************************************************
 
-    @PutMapping("/{userId}/projects/{projectId}")
+    @PostMapping("/{userId}/projects/{projectId}")
     @Operation(summary = "Update a project", description = "Update an existing project by ID")
     public ResponseEntity<Void> updateProject(@PathVariable Long userId, @PathVariable Long projectId) {
         try {
-            userService.updateProject(userId, projectId);
+            userService.addProjectToUser(userId, projectId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update project id", e);
+        }
+    }
+
+    @DeleteMapping("/{userId}/projects/{projectId}")
+    public ResponseEntity<Void> removeProjectFromUser(@PathVariable Long userId, @PathVariable Long projectId) {
+        try {
+            userService.removeProjectFromUser(userId, projectId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete project", e);
         }
     }
 }

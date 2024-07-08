@@ -86,7 +86,7 @@ public class UserService {
 
 // Section project *************************************************
 
-    public void updateProject(Long userId, Long projectId){
+    public void addProjectToUser(Long userId, Long projectId){
 
         User user = userRepository.findById(userId).orElse(null);
 
@@ -95,5 +95,16 @@ public class UserService {
             userRepository.save(user);
         }
     }
+
+    public void removeProjectFromUser(Long userId, Long projectId){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            user.getProjects().remove(projectId);
+            userRepository.save(user);
+        }
+    }
+
 
 }
