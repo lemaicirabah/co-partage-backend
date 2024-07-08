@@ -93,7 +93,7 @@ public class UserController {
     // Section project *************************************************
 
     @PostMapping("/{userId}/projects/{projectId}")
-    @Operation(summary = "Update a project", description = "Update an existing project by ID")
+    @Operation(summary = "add a project", description = "Add an existing project by ID")
     public ResponseEntity<Void> updateProject(@PathVariable Long userId, @PathVariable Long projectId) {
         try {
             userService.addProjectToUser(userId, projectId);
@@ -104,6 +104,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}/projects/{projectId}")
+    @Operation(summary = "remove a project", description = "Remove an existing project by ID")
     public ResponseEntity<Void> removeProjectFromUser(@PathVariable Long userId, @PathVariable Long projectId) {
         try {
             userService.removeProjectFromUser(userId, projectId);
