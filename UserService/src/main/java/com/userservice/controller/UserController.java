@@ -94,7 +94,7 @@ public class UserController {
 
     @PostMapping("/{userId}/projects/{projectId}")
     @Operation(summary = "add a project", description = "Add an existing project by ID")
-    public ResponseEntity<Void> updateProject(@PathVariable Long userId, @PathVariable Long projectId) {
+    public ResponseEntity<Void> addProjectToUser(@PathVariable Long userId, @PathVariable Long projectId) {
         try {
             userService.addProjectToUser(userId, projectId);
             return ResponseEntity.noContent().build();

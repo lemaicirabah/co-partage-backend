@@ -35,10 +35,10 @@ public class ProjectController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping
+    @PostMapping("/{userId}")
     @Operation(summary = "Create a new project", description = "Create a new project")
-    public ResponseEntity<ProjectDto> createProject(@Valid @RequestBody ProjectDto projectDto) {
-        ProjectDto createdProject = projectService.createProject(projectDto);
+    public ResponseEntity<ProjectDto> createProject(@PathVariable Long userId, @Valid @RequestBody ProjectDto projectDto) {
+        ProjectDto createdProject = projectService.createProject(userId, projectDto);
         return ResponseEntity.ok(createdProject);
     }
 
@@ -52,17 +52,10 @@ public class ProjectController {
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{projectId}")
     @Operation(summary = "Delete a project", description = "Delete a project by its ID")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        projectService.deleteProject(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping
-    @Operation(summary = "Delete all projects", description = "Delete all projects")
-    public ResponseEntity<Void> deleteAllProjects() {
-        projectService.deleteAllProjects();
+    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
+        projectService.deleteProject(projectId);
         return ResponseEntity.noContent().build();
     }
 }

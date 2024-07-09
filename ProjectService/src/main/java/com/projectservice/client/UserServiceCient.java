@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface UserServiceCient {
 
     @PostMapping("/{userId}/projects/{projectId}")
-    void updateProject(@PathVariable Long userId, @PathVariable Long projectId);
+    void addProjectToUser(@PathVariable Long userId, @PathVariable Long projectId);
 
     @DeleteMapping("/{userId}/projects/{projectId}")
     void removeProjectFromUser(@PathVariable Long userId, @PathVariable Long projectId);

@@ -1,6 +1,9 @@
 package com.projectservice.service;
 
+import com.projectservice.client.UserServiceCient;
+import com.projectservice.dto.TaskDto;
 import com.projectservice.mapper.ProjectMapper;
+import com.projectservice.mapper.TaskMapper;
 import com.projectservice.repository.*;
 import com.projectservice.entity.*;
 
@@ -21,6 +24,9 @@ public class ProjectService {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private UserServiceCient userServiceClient;
+
     public List<ProjectDto> getAllProjects() {
         List<Project> projects = projectRepository.findAll();
         return projects.stream().map(ProjectMapper.INSTANCE::projectToProjectDto).collect(Collectors.toList());
@@ -32,14 +38,19 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectDto createProject(ProjectDto projectDto) {
+    public ProjectDto createProject(Long userId, ProjectDto projectDto) {
 
         Project project = ProjectMapper.INSTANCE.projectDtoToProject(projectDto);
-        Set<Task> tasks = project.getTasks();
-        if (tasks != null) {
-            taskRepository.saveAll(tasks);
-        }
+
+        project.setCreator(userId);
+        project.getMembers().add(userId);
+        project.setMembers(null);
+        project.setTasks(null);
+        project.setEvaluations(null);
+
         Project savedProject = projectRepository.save(project);
+        userServiceClient.addProjectToUser(userId, savedProject.getId());
+
         return ProjectMapper.INSTANCE.projectToProjectDto(savedProject);
     }
 
@@ -52,15 +63,6 @@ public class ProjectService {
             Project newProject = ProjectMapper.INSTANCE.projectDtoToProject(projectDto);
             existingProject.setTitle(newProject.getTitle());
             existingProject.setDescription(newProject.getDescription());
-            existingProject.setMembers(newProject.getMembers());
-            existingProject.setEvaluations(newProject.getEvaluations());
-            existingProject.setTasks(newProject.getTasks());
-
-            Set<Task> newTasks = existingProject.getTasks();
-
-            if (newTasks != null) {
-                taskRepository.saveAll(newTasks);
-            }
 
             Project updatedProject = projectRepository.save(existingProject);
             return ProjectMapper.INSTANCE.projectToProjectDto(updatedProject);
@@ -69,12 +71,84 @@ public class ProjectService {
     }
 
     @Transactional
-    public void deleteProject(Long id) {
-        projectRepository.deleteById(id);
+    public void deleteProject(Long projectId) {
+
+        Project existingProject = projectRepository.findById(projectId).orElse(null);
+
+        if(existingProject != null){
+
+            userServiceClient.removeProjectFromUser(existingProject.getCreator(), projectId);
+
+            for (Long id : existingProject.getMembers()){
+                userServiceClient.removeProjectFromUser(id, existingProject.getId());
+            }
+
+            projectRepository.deleteById(projectId);
+        }
+    }
+
+    // region task ********************************************************************
+
+    public TaskDto createTask(Long projectId, TaskDto taskDto){
+
+        Project existingProject = projectRepository.findById(projectId).orElse(null);
+
+        if(taskDto.getAssignee() != null){
+            if(existingProject != null && existingProject.getMembers().contains(taskDto.getAssignee())){
+                Task task = TaskMapper.INSTANCE.taskDtoToTask(taskDto);
+                task = taskRepository.save(task);
+                existingProject.getTasks().add(task);
+                projectRepository.save(existingProject);
+                return TaskMapper.INSTANCE.taskToTaskDto(task);
+            }
+        }
+
+        return null;
+    }
+
+    public TaskDto updateTask(Long projectId, Long taskId, TaskDto taskDto){
+
+        Project existingProject = projectRepository.findById(projectId).orElse(null);
+        Task existingTask = taskRepository.findById(taskId).orElse(null);
+
+        if (existingProject != null && existingTask != null && existingProject.getMembers().contains(taskDto.getAssignee())) {
+
+            Task newTask = TaskMapper.INSTANCE.taskDtoToTask(taskDto);
+            existingTask.setAssignee(newTask.getAssignee());
+            existingTask.setDescription(newTask.getDescription());
+            existingTask.setTitle(newTask.getTitle());
+            existingTask.setDeadline(newTask.getDeadline());
+            existingTask.setStatus(newTask.getStatus());
+            existingTask = taskRepository.save(existingTask);
+            return TaskMapper.INSTANCE.taskToTaskDto(existingTask);
+        }
+        return null;
+    }
+
+    public TaskDto getTaskById(Long projectId, Long taskId) {
+
+        Project project = projectRepository.findById(projectId).orElse(null);
+
+        if(project != null){
+            Task task = taskRepository.findById(taskId).orElse(null);
+            return TaskMapper.INSTANCE.taskToTaskDto(task);
+        }
+
+        return null;
     }
 
     @Transactional
-    public void deleteAllProjects() {
-        projectRepository.deleteAll();
+    public void deleteTask(Long projectId, Long taskId) {
+
+        Project existingProject = projectRepository.findById(projectId).orElse(null);
+
+        if(existingProject != null){
+            taskRepository.deleteById(taskId);
+        }
+
     }
+
+
+
+
 }
