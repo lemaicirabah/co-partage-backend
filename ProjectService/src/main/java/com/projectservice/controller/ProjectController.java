@@ -96,5 +96,19 @@ public class ProjectController {
 
     // region Member ********************************************************************
 
+    @PostMapping("/{projectId/members/{userId}")
+    @Operation(summary = "Add a new member", description = "Add a new member")
+    public ResponseEntity<Void> addMember(@PathVariable Long projectId, @PathVariable Long userId) {
+        projectService.addMember(projectId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{projectId/members/{userId}")
+    @Operation(summary = "Delete a new member", description = "Delete a new member")
+    public ResponseEntity<Void> deleteMember(@PathVariable Long projectId, @PathVariable Long userId) {
+        projectService.deleteMember(projectId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }
