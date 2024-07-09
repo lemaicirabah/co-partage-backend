@@ -62,28 +62,28 @@ public class ProjectController {
 
     // region task ********************************************************************
 
-    @PostMapping("/{projectId/tasks}")
+    @PostMapping("/{projectId}/tasks}")
     @Operation(summary = "Create a new Task", description = "Create a new task")
     public ResponseEntity<TaskDto> createTask(@PathVariable Long projectId, @RequestBody TaskDto taskDto) {
         TaskDto createdTask = projectService.createTask(projectId, taskDto);
         return ResponseEntity.ok(createdTask);
     }
 
-    @GetMapping("/{projectId/tasks/{taskId}")
+    @GetMapping("/{projectId}/tasks/{taskId}")
     @Operation(summary = "Get a Task", description = "Get a task by id")
     public ResponseEntity<TaskDto> getTask(@PathVariable Long projectId, @PathVariable Long taskId) {
         TaskDto task = projectService.getTaskById(projectId, taskId);
         return ResponseEntity.ok(task);
     }
 
-    @DeleteMapping("/{projectId/tasks/{taskId}")
+    @DeleteMapping("/{projectId}/tasks/{taskId}")
     @Operation(summary = "Delete a Task", description = "Delete a task by id")
     public ResponseEntity<Void> deleteTask(@PathVariable Long projectId, @PathVariable Long taskId) {
         projectService.deleteTask(projectId, taskId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{projectId/tasks/{taskId}")
+    @PutMapping("/{projectId}/tasks/{taskId}")
     @Operation(summary = "Update a Task", description = "Update a task by id")
     public ResponseEntity<TaskDto> deleteTask(@PathVariable Long projectId, @PathVariable Long taskId, @RequestBody TaskDto taskDto) {
 
@@ -96,14 +96,14 @@ public class ProjectController {
 
     // region Member ********************************************************************
 
-    @PostMapping("/{projectId/members/{userId}")
+    @PostMapping("/{projectId}/members/{userId}")
     @Operation(summary = "Add a new member", description = "Add a new member")
     public ResponseEntity<Void> addMember(@PathVariable Long projectId, @PathVariable Long userId) {
         projectService.addMember(projectId, userId);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{projectId/members/{userId}")
+    @DeleteMapping("/{projectId}/members/{userId}")
     @Operation(summary = "Delete a new member", description = "Delete a new member")
     public ResponseEntity<Void> deleteMember(@PathVariable Long projectId, @PathVariable Long userId) {
         projectService.deleteMember(projectId, userId);
