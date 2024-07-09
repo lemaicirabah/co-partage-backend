@@ -62,7 +62,7 @@ public class ProjectController {
 
     // region task ********************************************************************
 
-    @PostMapping("/{projectId}/tasks}")
+    @PostMapping("/{projectId}/tasks")
     @Operation(summary = "Create a new Task", description = "Create a new task")
     public ResponseEntity<TaskDto> createTask(@PathVariable Long projectId, @RequestBody TaskDto taskDto) {
         TaskDto createdTask = projectService.createTask(projectId, taskDto);
