@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient(name = "UserService", url = "http://localhost:8080", path = "/co-partage/users")
-public interface UserServiceCient {
+public interface UserServiceClient {
 
     @PostMapping("/{userId}/projects/{projectId}")
     void addProjectToUser(@PathVariable Long userId, @PathVariable Long projectId);
