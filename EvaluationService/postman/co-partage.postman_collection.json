@@ -1,0 +1,133 @@
+{
+    "info": {
+        "_postman_id": "unique-id-for-evaluation-service-collection",
+        "name": "EvaluationService",
+        "description": "Collection for Evaluation Service in co-partage API handling CRUD operations for evaluations.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Create Evaluation",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"evaluatorId\": \"1\",\n    \"evaluateeId\": \"2\",\n    \"projectId\": \"1\",\n    \"comments\": \"Great work on the project!\",\n    \"rating\": \"5\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/co-partage/evaluations",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "co-partage",
+                        "evaluations"
+                    ]
+                },
+                "description": "Creates a new evaluation entry in the database."
+            }
+        },
+        {
+            "name": "Get Evaluation",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/co-partage/evaluations/{{evaluation_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "co-partage",
+                        "evaluations",
+                        "{{evaluation_id}}"
+                    ]
+                },
+                "description": "Retrieves a specific evaluation by its ID."
+            }
+        },
+        {
+            "name": "Update Evaluation",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"evaluatorId\": \"1\",\n    \"evaluateeId\": \"2\",\n    \"projectId\": \"1\",\n    \"comments\": \"Updated comments on project performance.\",\n    \"rating\": \"4\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/co-partage/evaluations/{{evaluation_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "co-partage",
+                        "evaluations",
+                        "{{evaluation_id}}"
+                    ]
+                },
+                "description": "Updates an existing evaluation by its ID."
+            }
+        },
+        {
+            "name": "Delete Evaluation",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/co-partage/evaluations/{{evaluation_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "co-partage",
+                        "evaluations",
+                        "{{evaluation_id}}"
+                    ]
+                },
+                "description": "Deletes an evaluation by its ID."
+            }
+        },
+        {
+            "name": "Get All Evaluations",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/co-partage/evaluations",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "co-partage",
+                        "evaluations"
+                    ]
+                },
+                "description": "Retrieves all evaluations from the database."
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "evaluation_id",
+            "value": "1",
+            "type": "string"
+        }
+    ]
+}
