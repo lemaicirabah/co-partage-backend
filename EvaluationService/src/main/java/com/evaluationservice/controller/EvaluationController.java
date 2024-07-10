@@ -1,7 +1,7 @@
 package com.evaluationservice.controller;
 
-import com.evaluationservice.service.EvaluationService;
 import com.evaluationservice.dto.EvaluationDto;
+import com.evaluationservice.service.EvaluationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +18,7 @@ public class EvaluationController {
 
     @PostMapping
     public ResponseEntity<EvaluationDto> createEvaluation(@RequestBody EvaluationDto evaluationDto) {
-        EvaluationDto createdEvaluation = evaluationService.createEvaluation(
-                evaluationDto.getEvaluatorId(),
-                evaluationDto.getEvaluateeId(),
-                evaluationDto.getProjectId(),
-                evaluationDto.getComments(),
-                evaluationDto.getRating()
-        );
+        EvaluationDto createdEvaluation = evaluationService.createEvaluation(evaluationDto);
         return new ResponseEntity<>(createdEvaluation, HttpStatus.CREATED);
     }
 
@@ -52,4 +46,3 @@ public class EvaluationController {
         return new ResponseEntity<>(evaluations, HttpStatus.OK);
     }
 }
-
