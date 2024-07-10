@@ -142,11 +142,12 @@ public class ProjectService {
     public void deleteTask(Long projectId, Long taskId) {
 
         Project existingProject = projectRepository.findById(projectId).orElse(null);
-
         if(existingProject != null){
+            Task existingTask = taskRepository.findById(taskId).orElse(null);
+            existingProject.getTasks().remove(existingTask);
+            projectRepository.save(existingProject);
             taskRepository.deleteById(taskId);
         }
-
     }
 
     // region members ********************************************************************
