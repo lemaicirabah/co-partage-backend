@@ -13,14 +13,12 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Task title is mandatory")
     private String title;
 
     private String description;
 
     private Long assignee;
 
-    @NotNull(message = "Task status is mandatory")
     private TaskStatus status;
 
     @DateTimeFormat

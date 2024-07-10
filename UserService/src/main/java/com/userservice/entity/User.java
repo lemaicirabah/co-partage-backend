@@ -21,20 +21,20 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     private Profile profile;
 
-    @OneToMany(mappedBy = "creator")
-    private Set<Project> projects;
+    @ElementCollection
+    private Set<Long> projects;
 
-    @ManyToMany
-    private Set<UserGroup> groups;
+    @ElementCollection
+    private Set<Long> groups;
 
-    @OneToMany(mappedBy = "recipient")
-    private Set<Notification> notifications;
+    @ElementCollection
+    private Set<Long> notifications;
 
-    @OneToMany(mappedBy = "evaluator")
-    private Set<Evaluation> evaluationsGiven;
+    @ElementCollection
+    private Set<Long> evaluationsGiven;
 
-    @OneToMany(mappedBy = "evaluatee")
-    private Set<Evaluation> evaluationsReceived;
+    @ElementCollection
+    private Set<Long> evaluationsReceived;
 
     @ManyToMany
     private Set<Tag> tags;

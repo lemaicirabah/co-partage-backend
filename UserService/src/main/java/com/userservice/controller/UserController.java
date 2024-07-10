@@ -1,5 +1,6 @@
 package com.userservice.controller;
 
+import com.userservice.dto.ProjectDto;
 import com.userservice.dto.UserDto;
 import com.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -86,6 +87,30 @@ public class UserController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete all users", e);
+        }
+    }
+
+    // Section project *************************************************
+
+    @PostMapping("/{userId}/projects/{projectId}")
+    @Operation(summary = "add a project", description = "Add an existing project by ID")
+    public ResponseEntity<Void> addProjectToUser(@PathVariable Long userId, @PathVariable Long projectId) {
+        try {
+            userService.addProjectToUser(userId, projectId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update project id", e);
+        }
+    }
+
+    @DeleteMapping("/{userId}/projects/{projectId}")
+    @Operation(summary = "remove a project", description = "Remove an existing project by ID")
+    public ResponseEntity<Void> removeProjectFromUser(@PathVariable Long userId, @PathVariable Long projectId) {
+        try {
+            userService.removeProjectFromUser(userId, projectId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete project", e);
         }
     }
 }

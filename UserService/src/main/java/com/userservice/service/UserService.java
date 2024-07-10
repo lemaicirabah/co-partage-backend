@@ -1,5 +1,7 @@
 package com.userservice.service;
 
+import com.userservice.client.ProjectServiceClient;
+import com.userservice.dto.ProjectDto;
 import com.userservice.dto.UserDto;
 import com.userservice.entity.Skill;
 import com.userservice.entity.User;
@@ -9,6 +11,7 @@ import com.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,6 +25,9 @@ public class UserService {
     @Autowired
     private SkillRepository skillRepository;
 
+    @Autowired
+    private ProjectServiceClient projectServiceClient;
+
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream().map(UserMapper.INSTANCE::userToUserDto).collect(Collectors.toList());
@@ -32,23 +38,27 @@ public class UserService {
         return user != null ? UserMapper.INSTANCE.userToUserDto(user) : null;
     }
 
+
     public UserDto createUser(UserDto userDto) {
+        // A mediter de comment mieux le faire
+        // La création du projet -> seulement sur les champs en lien sur le User
+        // Si par exemple un User veut faire de quoi avec projet -> Utiliser les endpoints de la section projet
+        // Donc sassurer de ne pas ajouter des données comme un set de projet id
+        userDto.setProjects(null);
         User user = UserMapper.INSTANCE.userDtoToUser(userDto);
         return getUserDto(user);
     }
 
     public UserDto updateUser(Long id, UserDto userDto) {
+
         User existingUser = userRepository.findById(id).orElse(null);
+
         if (existingUser != null) {
+
             existingUser.setUsername(userDto.getUsername());
             existingUser.setEmail(userDto.getEmail());
             existingUser.setPassword(userDto.getPassword());
             existingUser.setProfile(UserMapper.INSTANCE.userDtoToUser(userDto).getProfile());
-            existingUser.setProjects(UserMapper.INSTANCE.userDtoToUser(userDto).getProjects());
-            existingUser.setGroups(UserMapper.INSTANCE.userDtoToUser(userDto).getGroups());
-            existingUser.setNotifications(UserMapper.INSTANCE.userDtoToUser(userDto).getNotifications());
-            existingUser.setEvaluationsGiven(UserMapper.INSTANCE.userDtoToUser(userDto).getEvaluationsGiven());
-            existingUser.setEvaluationsReceived(UserMapper.INSTANCE.userDtoToUser(userDto).getEvaluationsReceived());
             existingUser.setTags(UserMapper.INSTANCE.userDtoToUser(userDto).getTags());
 
             return getUserDto(existingUser);
@@ -73,4 +83,28 @@ public class UserService {
     public void deleteAllUsers() {
         userRepository.deleteAll();
     }
+
+// Section project *************************************************
+
+    public void addProjectToUser(Long userId, Long projectId){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            user.getProjects().add(projectId);
+            userRepository.save(user);
+        }
+    }
+
+    public void removeProjectFromUser(Long userId, Long projectId){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            user.getProjects().remove(projectId);
+            userRepository.save(user);
+        }
+    }
+
+
 }

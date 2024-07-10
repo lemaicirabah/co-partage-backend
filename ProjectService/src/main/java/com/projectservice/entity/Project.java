@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +22,6 @@ public class Project {
 
     private String description;
 
-    @NotNull(message = "Creator is mandatory")
     private Long creator;
 
     @ElementCollection
