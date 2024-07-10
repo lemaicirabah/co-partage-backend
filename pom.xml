@@ -14,6 +14,7 @@
         <module>ProjectService</module>
         <module>EurekaServer</module>
         <module>ApiGateway</module>
+        <module>EvaluationService</module>
         <!-- Add other microservices here -->
     </modules>
 
