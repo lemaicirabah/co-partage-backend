@@ -1,7 +1,5 @@
 package com.evaluationservice.entity;
 
-import com.evaluationservice.dto.ProjectDto;
-import com.evaluationservice.dto.UserDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,12 +19,4 @@ public class Evaluation {
     private Long evaluateeId; // Utiliser l'ID de l'évalué
     private Long projectId;   // Utiliser l'ID du projet
 
-    @Transient
-    private UserDto evaluator;
-
-    @Transient
-    private UserDto evaluatee;
-
-    @Transient
-    private ProjectDto project;
 }
