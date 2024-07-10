@@ -1,9 +1,11 @@
 {
     "info": {
-        "_postman_id": "unique-id-for-evaluation-service-collection",
+        "_postman_id": "b19b0eba-78ae-4acc-b3d6-2ff40151b5f6",
         "name": "EvaluationService",
         "description": "Collection for Evaluation Service in co-partage API handling CRUD operations for evaluations.",
-        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "36288151",
+        "_collection_link": "https://u99999-9965.postman.co/workspace/u-Workspace~a98f009d-ba93-4ecc-a971-7259db11dfb7/collection/36288151-b19b0eba-78ae-4acc-b3d6-2ff40151b5f6?action=share&source=collection_link&creator=36288151"
     },
     "item": [
         {
@@ -13,7 +15,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"evaluatorId\": \"1\",\n    \"evaluateeId\": \"2\",\n    \"projectId\": \"1\",\n    \"comments\": \"Great work on the project!\",\n    \"rating\": \"5\"\n}",
+                    "raw": "{\n    \"comments\": \" good !\",\n    \"rating\": 3,\n    \"evaluatorId\": 2,\n    \"evaluateeId\": 1,\n    \"projectId\": 2\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -31,7 +33,62 @@
                     ]
                 },
                 "description": "Creates a new evaluation entry in the database."
-            }
+            },
+            "response": [
+                {
+                    "name": "Create Evaluation",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"comments\": \" good !\",\n    \"rating\": 3,\n    \"evaluatorId\": 2,\n    \"evaluateeId\": 1,\n    \"projectId\": 2\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/co-partage/evaluations",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "co-partage",
+                                "evaluations"
+                            ]
+                        }
+                    },
+                    "status": "Created",
+                    "code": 201,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "key": "Transfer-Encoding",
+                            "value": "chunked"
+                        },
+                        {
+                            "key": "Date",
+                            "value": "Wed, 10 Jul 2024 03:08:31 GMT"
+                        },
+                        {
+                            "key": "Keep-Alive",
+                            "value": "timeout=60"
+                        },
+                        {
+                            "key": "Connection",
+                            "value": "keep-alive"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"id\": 5,\n    \"comments\": \" good !\",\n    \"rating\": 3,\n    \"evaluatorId\": 2,\n    \"evaluateeId\": 1,\n    \"projectId\": 2\n}"
+                }
+            ]
         },
         {
             "name": "Get Evaluation",
@@ -50,7 +107,8 @@
                     ]
                 },
                 "description": "Retrieves a specific evaluation by its ID."
-            }
+            },
+            "response": []
         },
         {
             "name": "Update Evaluation",
@@ -78,7 +136,8 @@
                     ]
                 },
                 "description": "Updates an existing evaluation by its ID."
-            }
+            },
+            "response": []
         },
         {
             "name": "Delete Evaluation",
@@ -97,7 +156,8 @@
                     ]
                 },
                 "description": "Deletes an evaluation by its ID."
-            }
+            },
+            "response": []
         },
         {
             "name": "Get All Evaluations",
@@ -115,6 +175,29 @@
                     ]
                 },
                 "description": "Retrieves all evaluations from the database."
+            },
+            "response": []
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "exec": [
+                    ""
+                ]
             }
         }
     ],
