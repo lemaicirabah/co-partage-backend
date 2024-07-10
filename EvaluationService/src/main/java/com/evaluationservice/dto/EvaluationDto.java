@@ -13,11 +13,5 @@ public class EvaluationDto {
     private Long evaluatorId;
     private Long evaluateeId;
     private Long projectId;
-
-    // Utilisation des DTO pour les détails si nécessaire
-    private UserDto evaluator;
-    private UserDto evaluatee;
-    private ProjectDto project;
-
     // Getters et setters
 }
