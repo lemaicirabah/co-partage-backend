@@ -75,7 +75,7 @@ public class ProjectService {
             Project updatedProject = projectRepository.save(existingProject);
             return ProjectMapper.INSTANCE.projectToProjectDto(updatedProject);
         }
-        return null;
+        throw new ProjectException(HttpStatus.NOT_FOUND, "Le projet avec le id : " + projectId + " est introuvable");
     }
 
     @Transactional

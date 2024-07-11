@@ -50,12 +50,13 @@ public class ProjectController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a project", description = "Update an existing project by ID")
-    public ResponseEntity<ProjectDto> updateProject(@PathVariable Long id, @RequestBody ProjectDto projectDto) {
-        ProjectDto updatedProject = projectService.updateProject(id, projectDto);
-        if (updatedProject != null) {
+    public ResponseEntity<?> updateProject(@PathVariable Long id, @RequestBody ProjectDto projectDto) {
+        try{
+            ProjectDto updatedProject = projectService.updateProject(id, projectDto);
             return ResponseEntity.ok(updatedProject);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{projectId}")
