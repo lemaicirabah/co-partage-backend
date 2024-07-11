@@ -2,13 +2,16 @@ package com.projectservice.controller;
 
 import com.projectservice.dto.ProjectDto;
 import com.projectservice.dto.TaskDto;
+import com.projectservice.exception.ProjectException;
 import com.projectservice.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -28,12 +31,14 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get project by ID", description = "Retrieve a project by its ID")
-    public ResponseEntity<ProjectDto> getProjectById(@PathVariable Long id) {
-        ProjectDto projectDto = projectService.getProjectById(id);
-        if (projectDto != null) {
+    public ResponseEntity<?> getProjectById(@PathVariable Long id) {
+
+        try{
+            ProjectDto projectDto = projectService.getProjectById(id);
             return ResponseEntity.ok(projectDto);
+        }catch (ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
-        return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/users/{userId}")
@@ -66,14 +71,20 @@ public class ProjectController {
     @Operation(summary = "Create a new Task", description = "Create a new task")
     public ResponseEntity<TaskDto> createTask(@PathVariable Long projectId, @RequestBody TaskDto taskDto) {
         TaskDto createdTask = projectService.createTask(projectId, taskDto);
-        return ResponseEntity.ok(createdTask);
+        if(createdTask != null){
+            return ResponseEntity.ok(createdTask);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/{projectId}/tasks/{taskId}")
     @Operation(summary = "Get a Task", description = "Get a task by id")
     public ResponseEntity<TaskDto> getTask(@PathVariable Long projectId, @PathVariable Long taskId) {
         TaskDto task = projectService.getTaskById(projectId, taskId);
-        return ResponseEntity.ok(task);
+        if(task != null){
+            return ResponseEntity.ok(task);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{projectId}/tasks/{taskId}")
@@ -86,7 +97,6 @@ public class ProjectController {
     @PutMapping("/{projectId}/tasks/{taskId}")
     @Operation(summary = "Update a Task", description = "Update a task by id")
     public ResponseEntity<TaskDto> deleteTask(@PathVariable Long projectId, @PathVariable Long taskId, @RequestBody TaskDto taskDto) {
-
         TaskDto updatedTask = projectService.updateTask(projectId, taskId, taskDto);
         if (updatedTask != null) {
             return ResponseEntity.ok(updatedTask);

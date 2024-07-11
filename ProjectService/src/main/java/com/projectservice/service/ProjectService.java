@@ -2,6 +2,7 @@ package com.projectservice.service;
 
 import com.projectservice.client.UserServiceClient;
 import com.projectservice.dto.TaskDto;
+import com.projectservice.exception.ProjectException;
 import com.projectservice.mapper.ProjectMapper;
 import com.projectservice.mapper.TaskMapper;
 import com.projectservice.repository.*;
@@ -9,6 +10,7 @@ import com.projectservice.entity.*;
 
 import com.projectservice.dto.ProjectDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +38,10 @@ public class ProjectService {
 
     public ProjectDto getProjectById(Long projectId) {
         Project project = projectRepository.findById(projectId).orElse(null);
-        return ProjectMapper.INSTANCE.projectToProjectDto(project);
+        if(project != null){
+            return ProjectMapper.INSTANCE.projectToProjectDto(project);
+        }
+        throw new ProjectException(HttpStatus.NOT_FOUND, "Le projet avec le id : " + projectId + " est introuvable");
     }
 
     @Transactional
