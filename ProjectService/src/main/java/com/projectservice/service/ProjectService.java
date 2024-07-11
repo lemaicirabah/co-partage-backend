@@ -11,7 +11,10 @@ import com.projectservice.dto.ProjectDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,8 +45,9 @@ public class ProjectService {
         Project project = ProjectMapper.INSTANCE.projectDtoToProject(projectDto);
 
         project.setCreator(userId);
-        project.getMembers().add(userId);
-        project.setMembers(null);
+        Set<Long> members = new HashSet<Long>();
+        members.add(userId);
+        project.setMembers(members);
         project.setTasks(null);
         project.setEvaluations(null);
 
