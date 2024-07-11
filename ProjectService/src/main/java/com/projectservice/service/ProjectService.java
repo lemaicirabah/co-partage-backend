@@ -102,37 +102,46 @@ public class ProjectService {
 
         Project existingProject = projectRepository.findById(projectId).orElse(null);
 
-        if(taskDto.getAssignee() != null){
-            if(existingProject != null && existingProject.getMembers().contains(taskDto.getAssignee())){
-                Task task = TaskMapper.INSTANCE.taskDtoToTask(taskDto);
-                task = taskRepository.save(task);
-                existingProject.getTasks().add(task);
-                projectRepository.save(existingProject);
-                return TaskMapper.INSTANCE.taskToTaskDto(task);
-            }
-        }
+        if(existingProject != null ){
 
-        return null;
+            if(taskDto.getAssignee() != null && !existingProject.getMembers().contains(taskDto.getAssignee())){
+                throw new ProjectException(HttpStatus.BAD_REQUEST, "La personne assignée à la tache doit faire partie des membres du projet");
+            }
+
+            Task task = TaskMapper.INSTANCE.taskDtoToTask(taskDto);
+            task = taskRepository.save(task);
+            existingProject.getTasks().add(task);
+            projectRepository.save(existingProject);
+            return TaskMapper.INSTANCE.taskToTaskDto(task);
+
+        }
+        throw new ProjectException(HttpStatus.NOT_FOUND, "Le projet avec le id : " + projectId + " est introuvable");
     }
 
     @Transactional
     public TaskDto updateTask(Long projectId, Long taskId, TaskDto taskDto){
 
         Project existingProject = projectRepository.findById(projectId).orElse(null);
-        Task existingTask = taskRepository.findById(taskId).orElse(null);
-
-        if (existingProject != null && existingTask != null && existingProject.getMembers().contains(taskDto.getAssignee())) {
-
-            Task newTask = TaskMapper.INSTANCE.taskDtoToTask(taskDto);
-            existingTask.setAssignee(newTask.getAssignee());
-            existingTask.setDescription(newTask.getDescription());
-            existingTask.setTitle(newTask.getTitle());
-            existingTask.setDeadline(newTask.getDeadline());
-            existingTask.setStatus(newTask.getStatus());
-            existingTask = taskRepository.save(existingTask);
-            return TaskMapper.INSTANCE.taskToTaskDto(existingTask);
+        if(existingProject == null){
+            throw new ProjectException(HttpStatus.NOT_FOUND, "Le projet avec le id : " + projectId + " est introuvable");
         }
-        return null;
+        Task existingTask = taskRepository.findById(taskId).orElse(null);
+        if(existingTask == null ){
+            throw new ProjectException(HttpStatus.NOT_FOUND, "La tache avec le id : " + taskId + " est introuvable");
+        }
+
+        if(taskDto.getAssignee() != null && !existingProject.getMembers().contains(taskDto.getAssignee())){
+            throw new ProjectException(HttpStatus.BAD_REQUEST, "La personne assignée à la tache doit faire partie des membres du projet");
+        }
+
+        Task newTask = TaskMapper.INSTANCE.taskDtoToTask(taskDto);
+        existingTask.setAssignee(newTask.getAssignee());
+        existingTask.setDescription(newTask.getDescription());
+        existingTask.setTitle(newTask.getTitle());
+        existingTask.setDeadline(newTask.getDeadline());
+        existingTask.setStatus(newTask.getStatus());
+        existingTask = taskRepository.save(existingTask);
+        return TaskMapper.INSTANCE.taskToTaskDto(existingTask);
     }
 
     public TaskDto getTaskById(Long projectId, Long taskId) {
@@ -144,7 +153,7 @@ public class ProjectService {
             return TaskMapper.INSTANCE.taskToTaskDto(task);
         }
 
-        return null;
+        throw new ProjectException(HttpStatus.NOT_FOUND, "La tache avec le id : " + taskId + " est introuvable");
     }
 
     @Transactional

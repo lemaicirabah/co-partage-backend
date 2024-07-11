@@ -70,22 +70,24 @@ public class ProjectController {
 
     @PostMapping("/{projectId}/tasks")
     @Operation(summary = "Create a new Task", description = "Create a new task")
-    public ResponseEntity<TaskDto> createTask(@PathVariable Long projectId, @RequestBody TaskDto taskDto) {
-        TaskDto createdTask = projectService.createTask(projectId, taskDto);
-        if(createdTask != null){
+    public ResponseEntity<?> createTask(@PathVariable Long projectId, @RequestBody TaskDto taskDto) {
+        try{
+            TaskDto createdTask = projectService.createTask(projectId, taskDto);
             return ResponseEntity.ok(createdTask);
+        }catch (ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
-        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/{projectId}/tasks/{taskId}")
     @Operation(summary = "Get a Task", description = "Get a task by id")
-    public ResponseEntity<TaskDto> getTask(@PathVariable Long projectId, @PathVariable Long taskId) {
-        TaskDto task = projectService.getTaskById(projectId, taskId);
-        if(task != null){
+    public ResponseEntity<?> getTask(@PathVariable Long projectId, @PathVariable Long taskId) {
+        try{
+            TaskDto task = projectService.getTaskById(projectId, taskId);
             return ResponseEntity.ok(task);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{projectId}/tasks/{taskId}")
@@ -97,12 +99,13 @@ public class ProjectController {
 
     @PutMapping("/{projectId}/tasks/{taskId}")
     @Operation(summary = "Update a Task", description = "Update a task by id")
-    public ResponseEntity<TaskDto> deleteTask(@PathVariable Long projectId, @PathVariable Long taskId, @RequestBody TaskDto taskDto) {
-        TaskDto updatedTask = projectService.updateTask(projectId, taskId, taskDto);
-        if (updatedTask != null) {
+    public ResponseEntity<?> deleteTask(@PathVariable Long projectId, @PathVariable Long taskId, @RequestBody TaskDto taskDto) {
+        try{
+            TaskDto updatedTask = projectService.updateTask(projectId, taskId, taskDto);
             return ResponseEntity.ok(updatedTask);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
-        return ResponseEntity.notFound().build();
     }
 
     // region Member ********************************************************************
