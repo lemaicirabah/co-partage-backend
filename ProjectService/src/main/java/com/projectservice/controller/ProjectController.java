@@ -2,13 +2,16 @@ package com.projectservice.controller;
 
 import com.projectservice.dto.ProjectDto;
 import com.projectservice.dto.TaskDto;
+import com.projectservice.exception.ProjectException;
 import com.projectservice.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -28,12 +31,13 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get project by ID", description = "Retrieve a project by its ID")
-    public ResponseEntity<ProjectDto> getProjectById(@PathVariable Long id) {
-        ProjectDto projectDto = projectService.getProjectById(id);
-        if (projectDto != null) {
+    public ResponseEntity<?> getProjectById(@PathVariable Long id) {
+        try{
+            ProjectDto projectDto = projectService.getProjectById(id);
             return ResponseEntity.ok(projectDto);
+        }catch (ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
-        return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/users/{userId}")
@@ -45,12 +49,13 @@ public class ProjectController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a project", description = "Update an existing project by ID")
-    public ResponseEntity<ProjectDto> updateProject(@PathVariable Long id, @RequestBody ProjectDto projectDto) {
-        ProjectDto updatedProject = projectService.updateProject(id, projectDto);
-        if (updatedProject != null) {
+    public ResponseEntity<?> updateProject(@PathVariable Long id, @RequestBody ProjectDto projectDto) {
+        try{
+            ProjectDto updatedProject = projectService.updateProject(id, projectDto);
             return ResponseEntity.ok(updatedProject);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{projectId}")
@@ -64,16 +69,24 @@ public class ProjectController {
 
     @PostMapping("/{projectId}/tasks")
     @Operation(summary = "Create a new Task", description = "Create a new task")
-    public ResponseEntity<TaskDto> createTask(@PathVariable Long projectId, @RequestBody TaskDto taskDto) {
-        TaskDto createdTask = projectService.createTask(projectId, taskDto);
-        return ResponseEntity.ok(createdTask);
+    public ResponseEntity<?> createTask(@PathVariable Long projectId, @RequestBody TaskDto taskDto) {
+        try{
+            TaskDto createdTask = projectService.createTask(projectId, taskDto);
+            return ResponseEntity.ok(createdTask);
+        }catch (ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
     }
 
     @GetMapping("/{projectId}/tasks/{taskId}")
     @Operation(summary = "Get a Task", description = "Get a task by id")
-    public ResponseEntity<TaskDto> getTask(@PathVariable Long projectId, @PathVariable Long taskId) {
-        TaskDto task = projectService.getTaskById(projectId, taskId);
-        return ResponseEntity.ok(task);
+    public ResponseEntity<?> getTask(@PathVariable Long projectId, @PathVariable Long taskId) {
+        try{
+            TaskDto task = projectService.getTaskById(projectId, taskId);
+            return ResponseEntity.ok(task);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
     }
 
     @DeleteMapping("/{projectId}/tasks/{taskId}")
@@ -85,22 +98,26 @@ public class ProjectController {
 
     @PutMapping("/{projectId}/tasks/{taskId}")
     @Operation(summary = "Update a Task", description = "Update a task by id")
-    public ResponseEntity<TaskDto> deleteTask(@PathVariable Long projectId, @PathVariable Long taskId, @RequestBody TaskDto taskDto) {
-
-        TaskDto updatedTask = projectService.updateTask(projectId, taskId, taskDto);
-        if (updatedTask != null) {
+    public ResponseEntity<?> deleteTask(@PathVariable Long projectId, @PathVariable Long taskId, @RequestBody TaskDto taskDto) {
+        try{
+            TaskDto updatedTask = projectService.updateTask(projectId, taskId, taskDto);
             return ResponseEntity.ok(updatedTask);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
-        return ResponseEntity.notFound().build();
     }
 
     // region Member ********************************************************************
 
     @PostMapping("/{projectId}/members/{userId}")
     @Operation(summary = "Add a new member", description = "Add a new member")
-    public ResponseEntity<Void> addMember(@PathVariable Long projectId, @PathVariable Long userId) {
-        projectService.addMember(projectId, userId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> addMember(@PathVariable Long projectId, @PathVariable Long userId) {
+        try{
+            ProjectDto p = projectService.addMember(projectId, userId);
+            return ResponseEntity.ok(p);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
     }
 
     @DeleteMapping("/{projectId}/members/{userId}")
@@ -109,6 +126,4 @@ public class ProjectController {
         projectService.deleteMember(projectId, userId);
         return ResponseEntity.noContent().build();
     }
-
-
 }

@@ -77,7 +77,16 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+
+        User existingUser = userRepository.findById(id).orElse(null);
+
+        if(existingUser != null){
+            for(Long projectId : existingUser.getProjects()){
+                projectServiceClient.deleteMember(projectId, id);
+
+            }
+            userRepository.deleteById(id);
+        }
     }
 
     public void deleteAllUsers() {
