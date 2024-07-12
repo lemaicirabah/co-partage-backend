@@ -148,12 +148,14 @@ public class ProjectService {
 
         Project project = projectRepository.findById(projectId).orElse(null);
 
-        if(project != null){
-            Task task = taskRepository.findById(taskId).orElse(null);
-            return TaskMapper.INSTANCE.taskToTaskDto(task);
+        if(project == null){
+            throw new ProjectException(HttpStatus.NOT_FOUND, "Le projet avec le id : " + projectId + " est introuvable");
         }
-
-        throw new ProjectException(HttpStatus.NOT_FOUND, "La tache avec le id : " + taskId + " est introuvable");
+        Task task = taskRepository.findById(taskId).orElse(null);
+        if(task == null){
+            throw new ProjectException(HttpStatus.NOT_FOUND, "La tache avec le id : " + taskId + " est introuvable");
+        }
+        return TaskMapper.INSTANCE.taskToTaskDto(task);
     }
 
     @Transactional
@@ -171,15 +173,18 @@ public class ProjectService {
     // region members ********************************************************************
 
     @Transactional
-    public void addMember(Long projectId, Long memberId) {
+    public ProjectDto addMember(Long projectId, Long memberId) {
 
         Project existingProject = projectRepository.findById(projectId).orElse(null);
 
         if(existingProject != null){
             existingProject.getMembers().add(memberId);
             userServiceClient.addProjectToUser(memberId, existingProject.getId());
-            projectRepository.save(existingProject);
+            Project p = projectRepository.save(existingProject);
+            return ProjectMapper.INSTANCE.projectToProjectDto(p);
         }
+
+        throw new ProjectException(HttpStatus.NOT_FOUND, "Le projet avec le id : " + projectId + " est introuvable");
     }
 
     @Transactional

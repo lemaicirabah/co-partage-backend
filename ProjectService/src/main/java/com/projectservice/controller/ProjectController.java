@@ -32,7 +32,6 @@ public class ProjectController {
     @GetMapping("/{id}")
     @Operation(summary = "Get project by ID", description = "Retrieve a project by its ID")
     public ResponseEntity<?> getProjectById(@PathVariable Long id) {
-
         try{
             ProjectDto projectDto = projectService.getProjectById(id);
             return ResponseEntity.ok(projectDto);
@@ -112,9 +111,13 @@ public class ProjectController {
 
     @PostMapping("/{projectId}/members/{userId}")
     @Operation(summary = "Add a new member", description = "Add a new member")
-    public ResponseEntity<Void> addMember(@PathVariable Long projectId, @PathVariable Long userId) {
-        projectService.addMember(projectId, userId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> addMember(@PathVariable Long projectId, @PathVariable Long userId) {
+        try{
+            ProjectDto p = projectService.addMember(projectId, userId);
+            return ResponseEntity.ok(p);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
     }
 
     @DeleteMapping("/{projectId}/members/{userId}")
@@ -123,6 +126,4 @@ public class ProjectController {
         projectService.deleteMember(projectId, userId);
         return ResponseEntity.noContent().build();
     }
-
-
 }
