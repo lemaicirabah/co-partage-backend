@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -194,6 +195,13 @@ public class ProjectService {
 
         if(existingProject != null){
             existingProject.getMembers().remove(memberId);
+
+            for(Task task : existingProject.getTasks()){
+                if(Objects.equals(task.getAssignee() , memberId)){
+                    task.setAssignee(null);
+                    taskRepository.save(task);
+                }
+            }
             userServiceClient.removeProjectFromUser(memberId, existingProject.getId());
             projectRepository.save(existingProject);
 
