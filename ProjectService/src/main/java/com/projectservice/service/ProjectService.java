@@ -191,6 +191,11 @@ public class ProjectService {
             existingProject.getMembers().remove(memberId);
             userServiceClient.removeProjectFromUser(memberId, existingProject.getId());
             projectRepository.save(existingProject);
+
+            //delete le projet si il ny a plus de membre dans le projet
+            if(existingProject.getMembers().isEmpty()){
+                deleteProject(projectId);
+            }
         }
     }
 
