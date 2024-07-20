@@ -113,4 +113,30 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete project", e);
         }
     }
+
+    // Section evaluation *************************************************
+
+    @PutMapping("/{userId}/evaluations/givens")
+    @Operation(summary = "add a given evaluation", description = "add a given evaluation by ID")
+    public ResponseEntity<Void> addGivenEvaluationToUser(@PathVariable Long userId, @RequestBody Long evaluationId) {
+        try {
+            userService.addGivenEvaluationToUser(userId, evaluationId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update evaluation id", e);
+        }
+    }
+
+    @PutMapping("/{userId}/evaluations/receives")
+    @Operation(summary = "add a receive evaluation", description = "add a receive evaluation by ID")
+    public ResponseEntity<Void> addReceiveEvaluationToUser(@PathVariable Long userId, @RequestBody Long evaluationId) {
+        try {
+            userService.addReceiveEvaluationToUser(userId, evaluationId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update evaluation id", e);
+        }
+    }
+
+
 }

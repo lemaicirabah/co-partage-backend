@@ -117,5 +117,26 @@ public class UserService {
         }
     }
 
+    // Section evaluation *************************************************
+
+    public void addGivenEvaluationToUser(Long userId, Long evaluationId){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            user.getEvaluationsGiven().add(evaluationId);
+            userRepository.save(user);
+        }
+    }
+
+    public void addReceiveEvaluationToUser(Long userId, Long evaluationId){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            user.getEvaluationsReceived().add(evaluationId);
+            userRepository.save(user);
+        }
+    }
 
 }

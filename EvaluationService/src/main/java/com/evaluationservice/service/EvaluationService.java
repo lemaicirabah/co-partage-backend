@@ -33,6 +33,8 @@ public class EvaluationService {
     public EvaluationDto createEvaluation(EvaluationDto evaluationDto) {
         Evaluation evaluation = evaluationMapper.toEntity(evaluationDto);
         evaluation = evaluationRepository.save(evaluation);
+        userServiceClient.addGivenEvaluationToUser(evaluation.getEvaluatorId(), evaluation.getId());
+        userServiceClient.addReceiveEvaluationToUser(evaluation.getEvaluateeId(), evaluation.getId());
         return evaluationMapper.toDTO(evaluation);
     }
 
