@@ -35,7 +35,4 @@ public class User {
 
     @ElementCollection
     private Set<Long> evaluationsReceived;
-
-    @ManyToMany
-    private Set<Tag> tags;
 }

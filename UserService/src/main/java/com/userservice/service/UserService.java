@@ -60,7 +60,6 @@ public class UserService {
             existingUser.setEmail(userDto.getEmail());
             existingUser.setPassword(userDto.getPassword());
             existingUser.setProfile(UserMapper.INSTANCE.userDtoToUser(userDto).getProfile());
-            existingUser.setTags(UserMapper.INSTANCE.userDtoToUser(userDto).getTags());
 
             return getUserDto(existingUser);
         }
