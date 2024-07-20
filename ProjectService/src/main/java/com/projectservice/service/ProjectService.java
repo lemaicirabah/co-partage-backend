@@ -204,4 +204,20 @@ public class ProjectService {
         }
     }
 
+    // region Evaluation ********************************************************************
+
+    @Transactional
+    public ProjectDto addEvaluation(Long projectId, Long evaluationId) {
+
+        Project existingProject = projectRepository.findById(projectId).orElse(null);
+
+        if(existingProject != null){
+            existingProject.getEvaluations().add(evaluationId);
+            Project p = projectRepository.save(existingProject);
+            return ProjectMapper.INSTANCE.projectToProjectDto(p);
+        }
+        throw new ProjectException(HttpStatus.NOT_FOUND, "Le projet avec le id : " + projectId + " est introuvable");
+    }
+
+
 }

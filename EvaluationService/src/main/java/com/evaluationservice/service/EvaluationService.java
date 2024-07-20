@@ -35,6 +35,7 @@ public class EvaluationService {
         evaluation = evaluationRepository.save(evaluation);
         userServiceClient.addGivenEvaluationToUser(evaluation.getEvaluatorId(), evaluation.getId());
         userServiceClient.addReceiveEvaluationToUser(evaluation.getEvaluateeId(), evaluation.getId());
+        projectServiceClient.addEvaluation(evaluation.getProjectId(), evaluation.getId());
         return evaluationMapper.toDTO(evaluation);
     }
 

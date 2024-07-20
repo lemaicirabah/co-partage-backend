@@ -126,4 +126,19 @@ public class ProjectController {
         projectService.deleteMember(projectId, userId);
         return ResponseEntity.noContent().build();
     }
+
+    // region evaluation
+
+    @PutMapping("/{projectId}/evaluations")
+    @Operation(summary = "Add an evaluaton", description = "Add an evaluaton by project id")
+    public ResponseEntity<?> addEvaluation(@PathVariable Long projectId, @RequestBody Long evaluationId) {
+        try{
+            ProjectDto proDto = projectService.addEvaluation(projectId, evaluationId);
+            return ResponseEntity.ok(proDto);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
+    }
+
+
 }
