@@ -1,7 +1,6 @@
 package com.userservice.service;
 
 import com.userservice.client.ProjectServiceClient;
-import com.userservice.dto.ProjectDto;
 import com.userservice.dto.UserDto;
 import com.userservice.entity.Skill;
 import com.userservice.entity.User;
