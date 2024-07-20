@@ -1,5 +1,7 @@
 package com.evaluationservice.service;
 
+import com.evaluationservice.client.ProjectServiceClient;
+import com.evaluationservice.client.UserServiceClient;
 import com.evaluationservice.dto.EvaluationDto;
 import com.evaluationservice.entity.Evaluation;
 import com.evaluationservice.exception.ResourceNotFoundException;
@@ -21,6 +23,12 @@ public class EvaluationService {
 
     @Autowired
     private EvaluationMapper evaluationMapper;
+
+    @Autowired
+    private UserServiceClient userServiceClient;
+
+    @Autowired
+    private ProjectServiceClient projectServiceClient;
 
     public EvaluationDto createEvaluation(EvaluationDto evaluationDto) {
         Evaluation evaluation = evaluationMapper.toEntity(evaluationDto);
