@@ -45,6 +45,8 @@ public class UserService {
         // Si par exemple un User veut faire de quoi avec projet -> Utiliser les endpoints de la section projet
         // Donc sassurer de ne pas ajouter des données comme un set de projet id
         userDto.setProjects(null);
+        userDto.setEvaluationsGiven(null);
+        userDto.setEvaluationsReceived(null);
         User user = UserMapper.INSTANCE.userDtoToUser(userDto);
         return getUserDto(user);
     }

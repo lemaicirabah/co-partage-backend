@@ -14,4 +14,6 @@ public class UserDto {
     private String password;
     private ProfileDto profile;
     private Set<Long> projects;
+    private Set<Long> evaluationsGiven;
+    private Set<Long> evaluationsReceived;
 }
