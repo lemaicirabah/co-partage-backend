@@ -4,14 +4,17 @@ import com.userservice.client.ProjectServiceClient;
 import com.userservice.dto.UserDto;
 import com.userservice.entity.Skill;
 import com.userservice.entity.User;
+import com.userservice.exception.UserException;
 import com.userservice.mapper.UserMapper;
 import com.userservice.repository.SkillRepository;
 import com.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,13 +42,20 @@ public class UserService {
 
 
     public UserDto createUser(UserDto userDto) {
-        // A mediter de comment mieux le faire
-        // La création du projet -> seulement sur les champs en lien sur le User
-        // Si par exemple un User veut faire de quoi avec projet -> Utiliser les endpoints de la section projet
-        // Donc sassurer de ne pas ajouter des données comme un set de projet id
-        userDto.setProjects(null);
-        userDto.setEvaluationsGiven(null);
-        userDto.setEvaluationsReceived(null);
+
+        if (userDto.getUsername() == null || userDto.getUsername().isEmpty()){
+            throw  new UserException(HttpStatus.BAD_REQUEST, "Le username est un champ obligatoire !");
+        }
+
+        Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
+        if (existingUser.isPresent()) {
+            throw  new UserException(HttpStatus.BAD_REQUEST, "Le username " + userDto.getUsername() + " existe déjà !");
+        }
+
+        if(userDto.getProjects() != null || userDto.getEvaluationsGiven() != null || userDto.getEvaluationsReceived() != null){
+            throw  new UserException(HttpStatus.BAD_REQUEST, "Seuls les champs spécifiques à l'utilisateur sont autorisés !");
+        }
+
         User user = UserMapper.INSTANCE.userDtoToUser(userDto);
         return getUserDto(user);
     }
@@ -53,6 +63,10 @@ public class UserService {
     public UserDto updateUser(Long id, UserDto userDto) {
 
         User existingUser = userRepository.findById(id).orElse(null);
+
+        if (userDto.getUsername() == null || userDto.getUsername().isEmpty()){
+            throw  new UserException(HttpStatus.BAD_REQUEST, "Le username est un champ obligatoire !");
+        }
 
         if (existingUser != null) {
 

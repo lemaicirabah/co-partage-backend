@@ -1,6 +1,7 @@
 package com.userservice.controller;
 
 import com.userservice.dto.UserDto;
+import com.userservice.exception.UserException;
 import com.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,11 +44,14 @@ public class UserController {
 
     @PostMapping
     @Operation(summary = "Create a new user", description = "Create a new user")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
         try {
             UserDto createdUser = userService.createUser(userDto);
             return ResponseEntity.ok(createdUser);
-        } catch (Exception e) {
+        }catch (UserException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
+        catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
         }
     }
