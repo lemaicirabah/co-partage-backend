@@ -93,7 +93,20 @@ public class UserController {
         }
     }
 
-    // Section project *************************************************
+    // Section login *************************************************
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody String username) {
+        try{
+            UserDto userDto = userService.login(username);
+            return ResponseEntity.ok(userDto);
+        }catch (UserException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
+    }
+
+
+        // Section project *************************************************
 
     @PostMapping("/{userId}/projects/{projectId}")
     @Operation(summary = "add a project", description = "Add an existing project by ID")

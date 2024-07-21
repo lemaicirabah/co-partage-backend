@@ -68,6 +68,10 @@ public class UserService {
             throw  new UserException(HttpStatus.BAD_REQUEST, "Le username est un champ obligatoire !");
         }
 
+        if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
+            throw  new UserException(HttpStatus.BAD_REQUEST, "Le username " + userDto.getUsername() + " existe déjà !");
+        }
+
         if (existingUser != null) {
 
             existingUser.setUsername(userDto.getUsername());
@@ -105,6 +109,19 @@ public class UserService {
 
     public void deleteAllUsers() {
         userRepository.deleteAll();
+    }
+
+// Section login *************************************************
+
+    public UserDto login(String username) {
+
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if(user.isPresent()){
+            return UserMapper.INSTANCE.userToUserDto(user.get());
+        }
+
+        throw  new UserException(HttpStatus.BAD_REQUEST, "Le username " + username + " n'existe pas !");
     }
 
 // Section project *************************************************
