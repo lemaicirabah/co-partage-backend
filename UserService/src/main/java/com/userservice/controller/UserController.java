@@ -29,16 +29,15 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID", description = "Retrieve a user by its ID")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
             UserDto userDto = userService.getUserById(id);
-            if (userDto != null) {
-                return ResponseEntity.ok(userDto);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to retrieve user", e);
+            return ResponseEntity.ok(userDto);
+        }catch (UserException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
         }
     }
 
@@ -58,16 +57,15 @@ public class UserController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a user", description = "Update an existing user by ID")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         try {
             UserDto updatedUser = userService.updateUser(id, userDto);
-            if (updatedUser != null) {
-                return ResponseEntity.ok(updatedUser);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update user", e);
+            return ResponseEntity.ok(updatedUser);
+        }catch (UserException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
         }
     }
 
@@ -79,17 +77,6 @@ public class UserController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete user", e);
-        }
-    }
-
-    @DeleteMapping
-    @Operation(summary = "Delete all users", description = "Delete all users")
-    public ResponseEntity<Void> deleteAllUsers() {
-        try {
-            userService.deleteAllUsers();
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete all users", e);
         }
     }
 
@@ -105,8 +92,7 @@ public class UserController {
         }
     }
 
-
-        // Section project *************************************************
+    // Section project *************************************************
 
     @PostMapping("/{userId}/projects/{projectId}")
     @Operation(summary = "add a project", description = "Add an existing project by ID")

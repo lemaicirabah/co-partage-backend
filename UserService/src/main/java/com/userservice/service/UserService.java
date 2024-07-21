@@ -37,11 +37,23 @@ public class UserService {
 
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);
-        return user != null ? UserMapper.INSTANCE.userToUserDto(user) : null;
+
+        if(user != null){
+            return UserMapper.INSTANCE.userToUserDto(user);
+        }
+        throw  new UserException(HttpStatus.NOT_FOUND, "L'utilisateur avec le id : " + id + " est introuvables !");
     }
 
 
     public UserDto createUser(UserDto userDto) {
+
+        validateUserDto(userDto);
+
+        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
+        return getUserDto(user);
+    }
+
+    private void validateUserDto(UserDto userDto){
 
         if (userDto.getUsername() == null || userDto.getUsername().isEmpty()){
             throw  new UserException(HttpStatus.BAD_REQUEST, "Le username est un champ obligatoire !");
@@ -55,22 +67,13 @@ public class UserService {
         if(userDto.getProjects() != null || userDto.getEvaluationsGiven() != null || userDto.getEvaluationsReceived() != null){
             throw  new UserException(HttpStatus.BAD_REQUEST, "Seuls les champs spécifiques à l'utilisateur sont autorisés !");
         }
-
-        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
-        return getUserDto(user);
     }
 
     public UserDto updateUser(Long id, UserDto userDto) {
 
+        validateUserDto(userDto);
+
         User existingUser = userRepository.findById(id).orElse(null);
-
-        if (userDto.getUsername() == null || userDto.getUsername().isEmpty()){
-            throw  new UserException(HttpStatus.BAD_REQUEST, "Le username est un champ obligatoire !");
-        }
-
-        if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
-            throw  new UserException(HttpStatus.BAD_REQUEST, "Le username " + userDto.getUsername() + " existe déjà !");
-        }
 
         if (existingUser != null) {
 
@@ -81,7 +84,7 @@ public class UserService {
 
             return getUserDto(existingUser);
         }
-        return null;
+        throw  new UserException(HttpStatus.NOT_FOUND, "L'utilisateur avec le id : " + id + " est introuvables !");
     }
 
     private UserDto getUserDto(User existingUser) {
@@ -105,10 +108,6 @@ public class UserService {
             }
             userRepository.deleteById(id);
         }
-    }
-
-    public void deleteAllUsers() {
-        userRepository.deleteAll();
     }
 
 // Section login *************************************************
