@@ -29,9 +29,6 @@ public class User {
     private Set<Long> projects;
 
     @ElementCollection
-    private Set<Long> groups;
-
-    @ElementCollection
     private Set<Long> notifications;
 
     @ElementCollection

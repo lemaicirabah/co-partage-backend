@@ -118,25 +118,47 @@ public class UserController {
 
     // Section evaluation *************************************************
 
-    @PutMapping("/{userId}/evaluations/givens")
+    @PostMapping("/{userId}/evaluations/givens")
     @Operation(summary = "add a given evaluation", description = "add a given evaluation by ID")
     public ResponseEntity<Void> addGivenEvaluationToUser(@PathVariable Long userId, @RequestBody Long evaluationId) {
         try {
             userService.addGivenEvaluationToUser(userId, evaluationId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update evaluation id", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to add evaluation id", e);
         }
     }
 
-    @PutMapping("/{userId}/evaluations/receives")
+    @DeleteMapping("/{userId}/evaluations/givens/{evaluationId}")
+    @Operation(summary = "remove a given evaluation", description = "remove a given evaluation by ID")
+    public ResponseEntity<Void> removeGivenEvaluationToUser(@PathVariable Long userId, @PathVariable Long evaluationId) {
+        try {
+            userService.removeGivenEvaluationToUser(userId, evaluationId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to add evaluation id", e);
+        }
+    }
+
+    @PostMapping("/{userId}/evaluations/receives")
     @Operation(summary = "add a receive evaluation", description = "add a receive evaluation by ID")
     public ResponseEntity<Void> addReceiveEvaluationToUser(@PathVariable Long userId, @RequestBody Long evaluationId) {
         try {
             userService.addReceiveEvaluationToUser(userId, evaluationId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update evaluation id", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to remove evaluation id", e);
+        }
+    }
+
+    @DeleteMapping("/{userId}/evaluations/receives/{evaluationId}")
+    @Operation(summary = "remove a receive evaluation", description = "remove a receive evaluation by ID")
+    public ResponseEntity<Void> removeReceiveEvaluationToUser(@PathVariable Long userId, @PathVariable Long evaluationId) {
+        try {
+            userService.removeReceiveEvaluationToUser(userId, evaluationId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to add evaluation id", e);
         }
     }
 

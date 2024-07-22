@@ -1,5 +1,6 @@
 package com.userservice.service;
 
+import com.userservice.client.EvaluationServiceClient;
 import com.userservice.client.ProjectServiceClient;
 import com.userservice.dto.UserDto;
 import com.userservice.entity.Skill;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -29,6 +29,9 @@ public class UserService {
 
     @Autowired
     private ProjectServiceClient projectServiceClient;
+
+    @Autowired
+    private EvaluationServiceClient evaluationServiceClient;
 
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -102,10 +105,19 @@ public class UserService {
         User existingUser = userRepository.findById(id).orElse(null);
 
         if(existingUser != null){
+
             for(Long projectId : existingUser.getProjects()){
                 projectServiceClient.deleteMember(projectId, id);
-
             }
+
+            for(Long evaluationId : existingUser.getEvaluationsGiven()){
+                evaluationServiceClient.deleteEvaluation(evaluationId);
+            }
+
+            for(Long evaluationId : existingUser.getEvaluationsReceived()){
+                evaluationServiceClient.deleteEvaluation(evaluationId);
+            }
+
             userRepository.deleteById(id);
         }
     }
@@ -157,12 +169,32 @@ public class UserService {
         }
     }
 
+    public void removeGivenEvaluationToUser(Long userId, Long evaluationId){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            user.getEvaluationsGiven().remove(evaluationId);
+            userRepository.save(user);
+        }
+    }
+
     public void addReceiveEvaluationToUser(Long userId, Long evaluationId){
 
         User user = userRepository.findById(userId).orElse(null);
 
         if(user != null){
             user.getEvaluationsReceived().add(evaluationId);
+            userRepository.save(user);
+        }
+    }
+
+    public void removeReceiveEvaluationToUser(Long userId, Long evaluationId){
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user != null){
+            user.getEvaluationsReceived().remove(evaluationId);
             userRepository.save(user);
         }
     }

@@ -55,10 +55,16 @@ public class EvaluationService {
     }
 
     public void deleteEvaluation(Long id) {
-        if (!evaluationRepository.existsById(id)) {
+
+        Evaluation evaluation = evaluationRepository.findById(id).orElse(null);
+
+        if (evaluation == null) {
             throw new ResourceNotFoundException("Evaluation not found with id: " + id);
         }
         evaluationRepository.deleteById(id);
+        projectServiceClient.removeEvaluation(evaluation.getProjectId(), evaluation.getId());
+        userServiceClient.removeGivenEvaluationToUser(evaluation.getEvaluatorId(), evaluation.getId());
+        userServiceClient.removeReceiveEvaluationToUser(evaluation.getEvaluateeId(), evaluation.getId());
     }
 
     public List<EvaluationDto> getAllEvaluations() {
