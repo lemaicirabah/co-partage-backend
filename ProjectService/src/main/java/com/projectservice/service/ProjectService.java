@@ -1,5 +1,6 @@
 package com.projectservice.service;
 
+import com.projectservice.client.EvaluationServiceClient;
 import com.projectservice.client.UserServiceClient;
 import com.projectservice.dto.TaskDto;
 import com.projectservice.exception.ProjectException;
@@ -30,6 +31,9 @@ public class ProjectService {
 
     @Autowired
     private UserServiceClient userServiceClient;
+
+    @Autowired
+    private EvaluationServiceClient evaluationServiceClient;
 
     public List<ProjectDto> getAllProjects() {
         List<Project> projects = projectRepository.findAll();
@@ -89,6 +93,10 @@ public class ProjectService {
 
             for (Long id : existingProject.getMembers()){
                 userServiceClient.removeProjectFromUser(id, existingProject.getId());
+            }
+
+            for (Long id : existingProject.getEvaluations()){
+                evaluationServiceClient.deleteEvaluation(id);
             }
 
             projectRepository.deleteById(projectId);
