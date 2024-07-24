@@ -59,7 +59,7 @@ public class EvaluationService {
         Evaluation evaluation = evaluationRepository.findById(id).orElse(null);
 
         if (evaluation == null) {
-            throw new ResourceNotFoundException("Evaluation not found with id: " + id);
+            return;
         }
         evaluationRepository.deleteById(id);
         projectServiceClient.removeEvaluation(evaluation.getProjectId(), evaluation.getId());
