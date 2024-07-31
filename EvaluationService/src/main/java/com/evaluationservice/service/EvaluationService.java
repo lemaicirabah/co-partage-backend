@@ -1,5 +1,7 @@
 package com.evaluationservice.service;
 
+import com.evaluationservice.client.ProjectServiceClient;
+import com.evaluationservice.client.UserServiceClient;
 import com.evaluationservice.dto.EvaluationDto;
 import com.evaluationservice.entity.Evaluation;
 import com.evaluationservice.exception.ResourceNotFoundException;
@@ -22,9 +24,18 @@ public class EvaluationService {
     @Autowired
     private EvaluationMapper evaluationMapper;
 
+    @Autowired
+    private UserServiceClient userServiceClient;
+
+    @Autowired
+    private ProjectServiceClient projectServiceClient;
+
     public EvaluationDto createEvaluation(EvaluationDto evaluationDto) {
         Evaluation evaluation = evaluationMapper.toEntity(evaluationDto);
         evaluation = evaluationRepository.save(evaluation);
+        userServiceClient.addGivenEvaluationToUser(evaluation.getEvaluatorId(), evaluation.getId());
+        userServiceClient.addReceiveEvaluationToUser(evaluation.getEvaluateeId(), evaluation.getId());
+        projectServiceClient.addEvaluation(evaluation.getProjectId(), evaluation.getId());
         return evaluationMapper.toDTO(evaluation);
     }
 
@@ -44,10 +55,16 @@ public class EvaluationService {
     }
 
     public void deleteEvaluation(Long id) {
-        if (!evaluationRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Evaluation not found with id: " + id);
+
+        Evaluation evaluation = evaluationRepository.findById(id).orElse(null);
+
+        if (evaluation == null) {
+            return;
         }
         evaluationRepository.deleteById(id);
+        projectServiceClient.removeEvaluation(evaluation.getProjectId(), evaluation.getId());
+        userServiceClient.removeGivenEvaluationToUser(evaluation.getEvaluatorId(), evaluation.getId());
+        userServiceClient.removeReceiveEvaluationToUser(evaluation.getEvaluateeId(), evaluation.getId());
     }
 
     public List<EvaluationDto> getAllEvaluations() {

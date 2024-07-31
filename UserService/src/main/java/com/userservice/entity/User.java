@@ -1,5 +1,6 @@
 package com.userservice.entity;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +15,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = "Le champ user name est obligatoire !")
     private String username;
+
     private String email;
     private String password;
 
@@ -25,9 +29,6 @@ public class User {
     private Set<Long> projects;
 
     @ElementCollection
-    private Set<Long> groups;
-
-    @ElementCollection
     private Set<Long> notifications;
 
     @ElementCollection
@@ -35,7 +36,4 @@ public class User {
 
     @ElementCollection
     private Set<Long> evaluationsReceived;
-
-    @ManyToMany
-    private Set<Tag> tags;
 }

@@ -1,7 +1,7 @@
 package com.userservice.controller;
 
-import com.userservice.dto.ProjectDto;
 import com.userservice.dto.UserDto;
+import com.userservice.exception.UserException;
 import com.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,42 +29,43 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID", description = "Retrieve a user by its ID")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
             UserDto userDto = userService.getUserById(id);
-            if (userDto != null) {
-                return ResponseEntity.ok(userDto);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to retrieve user", e);
+            return ResponseEntity.ok(userDto);
+        }catch (UserException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
         }
     }
 
     @PostMapping
     @Operation(summary = "Create a new user", description = "Create a new user")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
         try {
             UserDto createdUser = userService.createUser(userDto);
             return ResponseEntity.ok(createdUser);
-        } catch (Exception e) {
+        }catch (UserException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
+        catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
         }
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a user", description = "Update an existing user by ID")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         try {
             UserDto updatedUser = userService.updateUser(id, userDto);
-            if (updatedUser != null) {
-                return ResponseEntity.ok(updatedUser);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update user", e);
+            return ResponseEntity.ok(updatedUser);
+        }catch (UserException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
         }
     }
 
@@ -79,22 +80,23 @@ public class UserController {
         }
     }
 
-    @DeleteMapping
-    @Operation(summary = "Delete all users", description = "Delete all users")
-    public ResponseEntity<Void> deleteAllUsers() {
-        try {
-            userService.deleteAllUsers();
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete all users", e);
+    // Section login *************************************************
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody String username) {
+        try{
+            UserDto userDto = userService.login(username);
+            return ResponseEntity.ok(userDto);
+        }catch (UserException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
     }
 
     // Section project *************************************************
 
-    @PostMapping("/{userId}/projects/{projectId}")
+    @PostMapping("/{userId}/projects")
     @Operation(summary = "add a project", description = "Add an existing project by ID")
-    public ResponseEntity<Void> addProjectToUser(@PathVariable Long userId, @PathVariable Long projectId) {
+    public ResponseEntity<Void> addProjectToUser(@PathVariable Long userId, @RequestBody Long projectId) {
         try {
             userService.addProjectToUser(userId, projectId);
             return ResponseEntity.noContent().build();
@@ -113,4 +115,52 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete project", e);
         }
     }
+
+    // Section evaluation *************************************************
+
+    @PostMapping("/{userId}/evaluations/givens")
+    @Operation(summary = "add a given evaluation", description = "add a given evaluation by ID")
+    public ResponseEntity<Void> addGivenEvaluationToUser(@PathVariable Long userId, @RequestBody Long evaluationId) {
+        try {
+            userService.addGivenEvaluationToUser(userId, evaluationId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to add evaluation id", e);
+        }
+    }
+
+    @DeleteMapping("/{userId}/evaluations/givens/{evaluationId}")
+    @Operation(summary = "remove a given evaluation", description = "remove a given evaluation by ID")
+    public ResponseEntity<Void> removeGivenEvaluationToUser(@PathVariable Long userId, @PathVariable Long evaluationId) {
+        try {
+            userService.removeGivenEvaluationToUser(userId, evaluationId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to add evaluation id", e);
+        }
+    }
+
+    @PostMapping("/{userId}/evaluations/receives")
+    @Operation(summary = "add a receive evaluation", description = "add a receive evaluation by ID")
+    public ResponseEntity<Void> addReceiveEvaluationToUser(@PathVariable Long userId, @RequestBody Long evaluationId) {
+        try {
+            userService.addReceiveEvaluationToUser(userId, evaluationId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to remove evaluation id", e);
+        }
+    }
+
+    @DeleteMapping("/{userId}/evaluations/receives/{evaluationId}")
+    @Operation(summary = "remove a receive evaluation", description = "remove a receive evaluation by ID")
+    public ResponseEntity<Void> removeReceiveEvaluationToUser(@PathVariable Long userId, @PathVariable Long evaluationId) {
+        try {
+            userService.removeReceiveEvaluationToUser(userId, evaluationId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to add evaluation id", e);
+        }
+    }
+
+
 }

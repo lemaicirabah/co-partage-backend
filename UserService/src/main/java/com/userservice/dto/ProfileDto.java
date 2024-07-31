@@ -12,5 +12,6 @@ public class ProfileDto {
     private String firstName;
     private String lastName;
     private String bio;
+    private Set<String> tags;
     private Set<SkillDto> skills;
 }

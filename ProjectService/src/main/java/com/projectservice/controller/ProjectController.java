@@ -126,4 +126,26 @@ public class ProjectController {
         projectService.deleteMember(projectId, userId);
         return ResponseEntity.noContent().build();
     }
+
+    // region evaluation ********************************************************************
+
+    @PostMapping("/{projectId}/evaluations")
+    @Operation(summary = "Add an evaluaton", description = "Add an evaluaton by project id")
+    public ResponseEntity<?> addEvaluation(@PathVariable Long projectId, @RequestBody Long evaluationId) {
+        try{
+            ProjectDto proDto = projectService.addEvaluation(projectId, evaluationId);
+            return ResponseEntity.ok(proDto);
+        }catch(ProjectException e){
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
+        }
+    }
+
+    @DeleteMapping("/{projectId}/evaluations/{evaluationId}")
+    @Operation(summary = "Remove an evaluation", description = "Remove an evaluation")
+    public ResponseEntity<Void> removeEvaluation(@PathVariable Long projectId, @PathVariable Long evaluationId) {
+        projectService.removeEvaluation(projectId, evaluationId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

@@ -17,6 +17,7 @@ public class Profile {
     private String firstName;
     private String lastName;
     private String bio;
+    private Set<String> tags;
 
     @ManyToMany
     private Set<Skill> skills;

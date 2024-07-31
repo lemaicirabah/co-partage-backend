@@ -1,5 +1,6 @@
 package com.projectservice.service;
 
+import com.projectservice.client.EvaluationServiceClient;
 import com.projectservice.client.UserServiceClient;
 import com.projectservice.dto.TaskDto;
 import com.projectservice.exception.ProjectException;
@@ -31,6 +32,9 @@ public class ProjectService {
 
     @Autowired
     private UserServiceClient userServiceClient;
+
+    @Autowired
+    private EvaluationServiceClient evaluationServiceClient;
 
     public List<ProjectDto> getAllProjects() {
         List<Project> projects = projectRepository.findAll();
@@ -90,6 +94,10 @@ public class ProjectService {
 
             for (Long id : existingProject.getMembers()){
                 userServiceClient.removeProjectFromUser(id, existingProject.getId());
+            }
+
+            for (Long id : existingProject.getEvaluations()){
+                evaluationServiceClient.deleteEvaluation(id);
             }
 
             projectRepository.deleteById(projectId);
@@ -211,5 +219,32 @@ public class ProjectService {
             }
         }
     }
+
+    // region Evaluation ********************************************************************
+
+    @Transactional
+    public ProjectDto addEvaluation(Long projectId, Long evaluationId) {
+
+        Project existingProject = projectRepository.findById(projectId).orElse(null);
+
+        if(existingProject != null){
+            existingProject.getEvaluations().add(evaluationId);
+            Project p = projectRepository.save(existingProject);
+            return ProjectMapper.INSTANCE.projectToProjectDto(p);
+        }
+        throw new ProjectException(HttpStatus.NOT_FOUND, "Le projet avec le id : " + projectId + " est introuvable");
+    }
+
+    @Transactional
+    public void removeEvaluation(Long projectId, Long evaluationId) {
+
+        Project existingProject = projectRepository.findById(projectId).orElse(null);
+
+        if(existingProject != null){
+            existingProject.getEvaluations().remove(evaluationId);
+            projectRepository.save(existingProject);
+        }
+    }
+
 
 }
