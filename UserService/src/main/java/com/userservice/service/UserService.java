@@ -41,10 +41,10 @@ public class UserService {
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);
 
-        if(user != null){
+        if (user != null) {
             return UserMapper.INSTANCE.userToUserDto(user);
         }
-        throw  new UserException(HttpStatus.NOT_FOUND, "L'utilisateur avec le id : " + id + " est introuvables !");
+        throw new UserException(HttpStatus.NOT_FOUND, "L'utilisateur avec le id : " + id + " est introuvables !");
     }
 
 
@@ -56,19 +56,19 @@ public class UserService {
         return getUserDto(user);
     }
 
-    private void validateUserDto(UserDto userDto){
+    private void validateUserDto(UserDto userDto) {
 
-        if (userDto.getUsername() == null || userDto.getUsername().isEmpty()){
-            throw  new UserException(HttpStatus.BAD_REQUEST, "Le username est un champ obligatoire !");
+        if (userDto.getUsername() == null || userDto.getUsername().isEmpty()) {
+            throw new UserException(HttpStatus.BAD_REQUEST, "Le username est un champ obligatoire !");
         }
 
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
         if (existingUser.isPresent()) {
-            throw  new UserException(HttpStatus.BAD_REQUEST, "Le username " + userDto.getUsername() + " existe déjà !");
+            throw new UserException(HttpStatus.BAD_REQUEST, "Le username " + userDto.getUsername() + " existe déjà !");
         }
 
-        if(userDto.getProjects() != null || userDto.getEvaluationsGiven() != null || userDto.getEvaluationsReceived() != null){
-            throw  new UserException(HttpStatus.BAD_REQUEST, "Seuls les champs spécifiques à l'utilisateur sont autorisés !");
+        if (userDto.getProjects() != null || userDto.getEvaluationsGiven() != null || userDto.getEvaluationsReceived() != null) {
+            throw new UserException(HttpStatus.BAD_REQUEST, "Seuls les champs spécifiques à l'utilisateur sont autorisés !");
         }
     }
 
@@ -87,7 +87,7 @@ public class UserService {
 
             return getUserDto(existingUser);
         }
-        throw  new UserException(HttpStatus.NOT_FOUND, "L'utilisateur avec le id : " + id + " est introuvables !");
+        throw new UserException(HttpStatus.NOT_FOUND, "L'utilisateur avec le id : " + id + " est introuvables !");
     }
 
     private UserDto getUserDto(User existingUser) {
@@ -104,17 +104,17 @@ public class UserService {
 
         User existingUser = userRepository.findById(id).orElse(null);
 
-        if(existingUser != null){
+        if (existingUser != null) {
 
-            for(Long projectId : existingUser.getProjects()){
+            for (Long projectId : existingUser.getProjects()) {
                 projectServiceClient.deleteMember(projectId, id);
             }
 
-            for(Long evaluationId : existingUser.getEvaluationsGiven()){
+            for (Long evaluationId : existingUser.getEvaluationsGiven()) {
                 evaluationServiceClient.deleteEvaluation(evaluationId);
             }
 
-            for(Long evaluationId : existingUser.getEvaluationsReceived()){
+            for (Long evaluationId : existingUser.getEvaluationsReceived()) {
                 evaluationServiceClient.deleteEvaluation(evaluationId);
             }
 
@@ -124,34 +124,32 @@ public class UserService {
 
 // Section login *************************************************
 
-    public UserDto login(String username) {
-
+    public UserDto login(String username) throws UserException {
+        System.out.println("Login service called with username: " + username); // Logging statement
         Optional<User> user = userRepository.findByUsername(username);
-
-        if(user.isPresent()){
+        if (user.isPresent()) {
             return UserMapper.INSTANCE.userToUserDto(user.get());
         }
-
-        throw  new UserException(HttpStatus.BAD_REQUEST, "Le username " + username + " n'existe pas !");
+        throw new UserException(HttpStatus.BAD_REQUEST, "Le username " + username + " n'existe pas !");
     }
 
 // Section project *************************************************
 
-    public void addProjectToUser(Long userId, Long projectId){
+    public void addProjectToUser(Long userId, Long projectId) {
 
         User user = userRepository.findById(userId).orElse(null);
 
-        if(user != null){
+        if (user != null) {
             user.getProjects().add(projectId);
             userRepository.save(user);
         }
     }
 
-    public void removeProjectFromUser(Long userId, Long projectId){
+    public void removeProjectFromUser(Long userId, Long projectId) {
 
         User user = userRepository.findById(userId).orElse(null);
 
-        if(user != null){
+        if (user != null) {
             user.getProjects().remove(projectId);
             userRepository.save(user);
         }
@@ -159,41 +157,41 @@ public class UserService {
 
     // Section evaluation *************************************************
 
-    public void addGivenEvaluationToUser(Long userId, Long evaluationId){
+    public void addGivenEvaluationToUser(Long userId, Long evaluationId) {
 
         User user = userRepository.findById(userId).orElse(null);
 
-        if(user != null){
+        if (user != null) {
             user.getEvaluationsGiven().add(evaluationId);
             userRepository.save(user);
         }
     }
 
-    public void removeGivenEvaluationToUser(Long userId, Long evaluationId){
+    public void removeGivenEvaluationToUser(Long userId, Long evaluationId) {
 
         User user = userRepository.findById(userId).orElse(null);
 
-        if(user != null){
+        if (user != null) {
             user.getEvaluationsGiven().remove(evaluationId);
             userRepository.save(user);
         }
     }
 
-    public void addReceiveEvaluationToUser(Long userId, Long evaluationId){
+    public void addReceiveEvaluationToUser(Long userId, Long evaluationId) {
 
         User user = userRepository.findById(userId).orElse(null);
 
-        if(user != null){
+        if (user != null) {
             user.getEvaluationsReceived().add(evaluationId);
             userRepository.save(user);
         }
     }
 
-    public void removeReceiveEvaluationToUser(Long userId, Long evaluationId){
+    public void removeReceiveEvaluationToUser(Long userId, Long evaluationId) {
 
         User user = userRepository.findById(userId).orElse(null);
 
-        if(user != null){
+        if (user != null) {
             user.getEvaluationsReceived().remove(evaluationId);
             userRepository.save(user);
         }
