@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/co-partage/users")
@@ -33,10 +34,9 @@ public class UserController {
         try {
             UserDto userDto = userService.getUserById(id);
             return ResponseEntity.ok(userDto);
-        }catch (UserException e){
+        } catch (UserException e) {
             return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
         }
     }
@@ -47,10 +47,9 @@ public class UserController {
         try {
             UserDto createdUser = userService.createUser(userDto);
             return ResponseEntity.ok(createdUser);
-        }catch (UserException e){
+        } catch (UserException e) {
             return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
         }
     }
@@ -61,10 +60,9 @@ public class UserController {
         try {
             UserDto updatedUser = userService.updateUser(id, userDto);
             return ResponseEntity.ok(updatedUser);
-        }catch (UserException e){
+        } catch (UserException e) {
             return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user", e);
         }
     }
@@ -83,11 +81,14 @@ public class UserController {
     // Section login *************************************************
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody String username) {
-        try{
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        try {
+            String username = loginRequest.get("username");
+            System.out.println("Attempting to log in user: " + username); // Logging statement
             UserDto userDto = userService.login(username);
             return ResponseEntity.ok(userDto);
-        }catch (UserException e){
+        } catch (UserException e) {
+            System.err.println("UserException occurred: " + e.getMessage()); // Logging statement
             return ResponseEntity.status(e.getHttpStatus()).body(e.getJsonErrorMessage());
         }
     }
